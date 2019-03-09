@@ -1,3 +1,8 @@
+###How to start the app
+1. run `npm install`
+1. run `npm start`
+1. open [http://localhost:3000](http://localhost:3000)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
