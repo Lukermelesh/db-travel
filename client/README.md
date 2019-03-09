@@ -1,4 +1,4 @@
-###How to start the app
+## How to start the app
 1. run `npm install`
 1. run `npm start`
 1. open [http://localhost:3000](http://localhost:3000)
