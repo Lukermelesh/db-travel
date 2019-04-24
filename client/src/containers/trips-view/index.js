@@ -1,1 +1,1 @@
-export {default} from './trips-view';
+export {default as TripsView} from './trips-view';
