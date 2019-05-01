@@ -13,7 +13,7 @@ const makeButon = (text, to, isActive) => <Link className={styles.navLink} key={
   <Button variant={isActive ? 'outlined' : 'text'}>{text}</Button>
 </Link>;
 
-const MenuBar = ({active}) => <AppBar><Toolbar className={styles.root}>
+const MenuBar = ({active}) => <AppBar position="static"><Toolbar className={styles.root}>
   <div>
     {menuItems.map(item => makeButon(item.text, item.to, item.to === active))}
   </div>
