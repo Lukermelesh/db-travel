@@ -5,3 +5,22 @@
 .header {
     background-color: lightskyblue;
 }
+
+.button {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+.justifyRight {
+    justify-content: flex-end;
+}
+
+/*TODO: add rotation animation if there is time*/
+.rotatedIcon {
+    transform: rotate(180deg);
+}

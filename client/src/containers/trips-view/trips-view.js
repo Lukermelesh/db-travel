@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {getTrips} from '../../services/data-fetchers';
+import {getTrips} from '../../helpers/data-fetchers';
 import {TripCard} from '../../components/trip-card';
 
 const TripsView = () => {
