@@ -43,7 +43,7 @@ const MenuBar = ({ active, classes }) => {
 };
 
 MenuBar.propTypes = {
-  active: PropTypes.bool.isRequired
+  active: PropTypes.string.isRequired
 };
 
 export default withStyles(styles)(MenuBar);

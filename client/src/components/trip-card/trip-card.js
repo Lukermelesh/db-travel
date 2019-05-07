@@ -131,7 +131,7 @@ const TripCard = ({ trip, classes }) => {
             onClick={handleEdit}
             aria-label="Edit"
           >
-            <Edit fontSize="small" />
+            <Edit />
           </IconButton>
           <IconButton
             classes={{ root: classes.iconButton }}
@@ -143,7 +143,7 @@ const TripCard = ({ trip, classes }) => {
             aria-expanded={expanded}
             aria-label="Show more"
           >
-            <ExpandMoreIcon fontSize="small" />
+            <ExpandMoreIcon />
           </IconButton>
         </div>
       </CardActions>
