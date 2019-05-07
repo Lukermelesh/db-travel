@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Card,
@@ -8,7 +8,9 @@ import {
   Collapse,
   IconButton,
   Typography,
-  Button
+  Button,
+  Divider,
+  Link
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Edit from '@material-ui/icons/Edit';
@@ -45,17 +47,31 @@ const TripCard = ({ trip }) => {
   };
 
   const isPending = trip.details.status === tripStatus.PENDING;
+  const renderTicketLinks = () =>
+    trip.details.tickets.map((ticket, index) => (
+      <Fragment>
+        <a key={index} href={ticket.url} download>
+          <Link component="p">{ticket.title}</Link>
+        </a>
+        <br />
+      </Fragment>
+    ));
 
   /*TODO: change color depending on trip status*/
   return (
     <Card className={styles.root}>
       <CardHeader title={getCardTitle()} className={styles.header} />
       <CardContent>
-        <Typography component="p">
-          From: {timestampToDate(trip.from)}
-        </Typography>
-        <Typography component="p">To: {timestampToDate(trip.to)}</Typography>
-        <Typography component="p">Destination: {trip.destination}</Typography>
+        <Typography component="p">Time</Typography>
+        <Typography component="p">{`${timestampToDate(
+          trip.from
+        )} - ${timestampToDate(trip.to)}`}</Typography>
+        <Divider className={styles.divider} />
+        <Typography component="p">Location</Typography>
+        <Typography component="p">{`${trip.origin} - ${
+          trip.destination
+        }`}</Typography>
+        <Divider className={styles.divider} />
       </CardContent>
       <CardActions
         className={classnames(styles.flex, !isPending && styles.justifyRight)}
@@ -100,13 +116,15 @@ const TripCard = ({ trip }) => {
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography component="p">Department: {trip.department}</Typography>
-          {/*TODO: tickets should be a file/multiple files*/}
-          <Typography component="p">Tickets: {trip.details.tickets}</Typography>
+          <Typography component="p">Department</Typography>
+          <Typography component="p">{trip.department}</Typography>
+          <Divider className={styles.divider} />
+          <Typography component="p">Tickets:</Typography>
+          {renderTicketLinks()}
+          <Divider className={styles.divider} />
           {/*TODO: decide how to display apartments*/}
-          <Typography component="p">
-            Accommodation: {trip.details.apartments}
-          </Typography>
+          <Typography component="p">Accommodation</Typography>
+          <Typography component="p">{trip.details.apartments}</Typography>
         </CardContent>
       </Collapse>
     </Card>
