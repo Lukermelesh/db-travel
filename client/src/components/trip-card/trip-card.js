@@ -25,9 +25,6 @@ import { getUserType } from '../../selectors/user-data';
 import { ADMIN, ORGANIZER } from '../../constants/user-types';
 
 const styles = theme => ({
-  header: {
-    backgroundColor: 'lightskyblue'
-  },
   primaryCta: {
     marginRight: theme.spacing.unit
   },
@@ -63,14 +60,27 @@ const TripCard = ({
   const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => setExpanded(!expanded);
+  const getHeaderColor = () => {
+    switch (trip.details.status) {
+      case tripStatus.APPROVED:
+        return 'lightskyblue';
+      case tripStatus.COMPLETED:
+        return 'seagreen';
+      case tripStatus.REJECTED:
+        return 'tomato';
+      case tripStatus.PENDING:
+        return 'gold';
+      default:
+        return 'silver';
+    }
+  };
 
   const handleApproveClick = () => approveTrip(trip.id);
   const handleDeclineClick = () => rejectTrip(trip.id);
   const handleEdit = () => alert('edit');
 
   const getCardTitle = () => {
-    const status = trip.details.status;
-    switch (status) {
+    switch (trip.details.status) {
       case tripStatus.APPROVED:
         return 'Approved';
       case tripStatus.COMPLETED:
@@ -95,10 +105,12 @@ const TripCard = ({
       </Fragment>
     ));
 
-  /*TODO: change header color depending on trip status*/
   return (
     <Card>
-      <CardHeader title={getCardTitle()} className={classes.header} />
+      <CardHeader
+        title={getCardTitle()}
+        style={{ backgroundColor: getHeaderColor() }}
+      />
       <CardContent>
         <Typography component="p">Time</Typography>
         <Typography component="p">{`${timestampToDate(
