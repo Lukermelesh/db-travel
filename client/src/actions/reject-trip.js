@@ -2,6 +2,7 @@ import { createAction } from 'redux-actions';
 import axios from 'axios';
 import { apiBaseUrl } from '../constants/env';
 import { REJECTED } from '../constants/trip-status';
+import { getUserId } from '../selectors/user-data';
 
 export const REJECT_TRIP_REQUEST = 'rejectTrip/FETCH_REQUEST';
 export const REJECT_TRIP_SUCCESS = 'rejectTrip/FETCH_SUCCESS';
@@ -19,8 +20,7 @@ export const rejectTrip = tripId => {
       const state = getState();
       await axios.post(`${apiBaseUrl}/trip/${tripId}`, {
         action: REJECTED,
-        //TODO: get user id from state!
-        userId: 1
+        userId: getUserId(state)
       });
       dispatch(rejectTripSuccess({ tripId }));
     } catch {

@@ -5,6 +5,7 @@ import { TripCard } from '../../components/trip-card';
 import { fetchUserTrips } from '../../actions/fetch-user-trips';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { getUserId } from '../../selectors/user-data';
 
 const styles = theme => ({
   layout: {
@@ -14,12 +15,11 @@ const styles = theme => ({
   }
 });
 
-const TripsView = ({ classes, fetchUserTrips, trips }) => {
+const TripsView = ({ classes, fetchUserTrips, trips, userId }) => {
   useEffect(() => {
     const fetchData = async () => {
-      //TODO: don't hardcode userId!
-      //TODO: maybe implement a loader while loading trips
-      await fetchUserTrips(1);
+      //TODO: maybe implement a loader while loading trips?
+      await fetchUserTrips(userId);
     };
 
     fetchData();
@@ -41,11 +41,13 @@ const TripsView = ({ classes, fetchUserTrips, trips }) => {
 TripsView.propTypes = {
   classes: PropTypes.object.isRequired,
   fetchUserTrips: PropTypes.func.isRequired,
-  trips: PropTypes.array.isRequired
+  trips: PropTypes.array.isRequired,
+  userId: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({
-  trips: state.trips
+  trips: state.trips,
+  userId: getUserId(state)
 });
 
 const mapDispatchToProps = {
