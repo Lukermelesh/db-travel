@@ -21,6 +21,8 @@ import { timestampToDate } from '../../helpers/date-helpers';
 import { connect } from 'react-redux';
 import { approveTrip } from '../../actions/approve-trip';
 import { rejectTrip } from '../../actions/reject-trip';
+import { getUserType } from '../../selectors/user-data';
+import { ADMIN, ORGANIZER } from '../../constants/user-types';
 
 const styles = theme => ({
   header: {
@@ -51,7 +53,13 @@ const styles = theme => ({
   }
 });
 
-const TripCard = ({ trip, classes, approveTrip, rejectTrip }) => {
+const TripCard = ({
+  trip,
+  classes,
+  approveTrip,
+  rejectTrip,
+  isPrivilegedUser
+}) => {
   const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => setExpanded(!expanded);
@@ -126,13 +134,15 @@ const TripCard = ({ trip, classes, approveTrip, rejectTrip }) => {
           </div>
         )}
         <div>
-          <IconButton
-            classes={{ root: classes.iconButton }}
-            onClick={handleEdit}
-            aria-label="Edit"
-          >
-            <Edit />
-          </IconButton>
+          {isPrivilegedUser && (
+            <IconButton
+              classes={{ root: classes.iconButton }}
+              onClick={handleEdit}
+              aria-label="Edit"
+            >
+              <Edit />
+            </IconButton>
+          )}
           <IconButton
             classes={{ root: classes.iconButton }}
             className={classnames(
@@ -169,6 +179,14 @@ TripCard.propTypes = {
   classes: PropTypes.object.isRequired,
   approveTrip: PropTypes.func.isRequired,
   rejectTrip: PropTypes.func.isRequired,
+  isPrivilegedUser: PropTypes.bool.isRequired
+};
+
+const mapStateToProps = state => {
+  const userType = getUserType(state);
+  return {
+    isPrivilegedUser: userType === ORGANIZER || userType === ADMIN
+  };
 };
 
 const mapDispatchToProps = {
@@ -178,6 +196,6 @@ const mapDispatchToProps = {
 
 //TODO: maybe use _.flow for better readability
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(withStyles(styles)(TripCard));
