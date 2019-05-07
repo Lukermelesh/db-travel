@@ -1,23 +1,49 @@
 import React from 'react';
-import {Toolbar, Button, AppBar} from '@material-ui/core';
-import styles from './menu-bar.module.css';
-import {Link} from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import { Toolbar, Button, AppBar } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 import * as routes from '../../constants/routes';
 
-const menuItems = [
-  {to: routes.MY_TRIPS_ROUTE, text: 'My Trips'},
-  {to: routes.ALL_TRIPS_ROUTE, text: 'All Trips'},
-];
+const styles = theme => ({
+  root: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    backgroundColor: 'lightblue'
+  },
 
-const makeButon = (text, to, isActive) => <Link className={styles.navLink} key={to} to={to}>
-  <Button variant={isActive ? 'outlined' : 'text'}>{text}</Button>
-</Link>;
+  navLink: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit
+  }
+});
 
-const MenuBar = ({active}) => <AppBar position="static"><Toolbar className={styles.root}>
-  <div>
-    {menuItems.map(item => makeButon(item.text, item.to, item.to === active))}
-  </div>
-  <Button onClick={() => alert('should logout')}>Log Out</Button>
-</Toolbar></AppBar>;
+const menuItems = [{ to: routes.MY_TRIPS_ROUTE, text: 'My Trips' }];
 
-export default MenuBar;
+//TODO: make different navigation for mobile (with hamburger icon)
+const MenuBar = ({ active, classes }) => {
+  const makeButton = (text, to, isActive) => (
+    <Link className={classes.navLink} key={to} to={to}>
+      <Button variant={isActive ? 'outlined' : 'text'}>{text}</Button>
+    </Link>
+  );
+
+  return (
+    <AppBar style={{ marginBottom: 18 }} position="static">
+      <Toolbar className={classes.root}>
+        <div>
+          {menuItems.map(item =>
+            makeButton(item.text, item.to, item.to === active)
+          )}
+        </div>
+        <Button onClick={() => alert('should logout')}>Log Out</Button>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+MenuBar.propTypes = {
+  active: PropTypes.bool.isRequired
+};
+
+export default withStyles(styles)(MenuBar);

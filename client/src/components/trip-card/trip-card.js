@@ -12,14 +12,43 @@ import {
   Divider,
   Link
 } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Edit from '@material-ui/icons/Edit';
-import styles from './trip-card.module.css';
 import classnames from 'classnames';
 import * as tripStatus from '../../constants/trip-status';
 import { timestampToDate } from '../../helpers/date-helpers';
 
-const TripCard = ({ trip }) => {
+const styles = theme => ({
+  header: {
+    backgroundColor: 'lightskyblue'
+  },
+  primaryCta: {
+    marginRight: theme.spacing.unit
+  },
+  flex: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  },
+  justifyRight: {
+    justifyContent: 'flex-end'
+  },
+  rotatedIcon: {
+    transform: 'rotate(180deg)'
+  },
+  iconButton: {
+    padding: theme.spacing.unit
+  },
+  icon: {
+    transition: 'transform 200ms'
+  },
+  divider: {
+    marginBottom: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 2
+  }
+});
+
+const TripCard = ({ trip, classes }) => {
   const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => setExpanded(!expanded);
@@ -49,37 +78,37 @@ const TripCard = ({ trip }) => {
   const isPending = trip.details.status === tripStatus.PENDING;
   const renderTicketLinks = () =>
     trip.details.tickets.map((ticket, index) => (
-      <Fragment>
-        <a key={index} href={ticket.url} download>
+      <Fragment key={index}>
+        <a href={ticket.url} download>
           <Link component="p">{ticket.title}</Link>
         </a>
         <br />
       </Fragment>
     ));
 
-  /*TODO: change color depending on trip status*/
+  /*TODO: change header color depending on trip status*/
   return (
-    <Card className={styles.root}>
-      <CardHeader title={getCardTitle()} className={styles.header} />
+    <Card>
+      <CardHeader title={getCardTitle()} className={classes.header} />
       <CardContent>
         <Typography component="p">Time</Typography>
         <Typography component="p">{`${timestampToDate(
           trip.from
         )} - ${timestampToDate(trip.to)}`}</Typography>
-        <Divider className={styles.divider} />
+        <Divider className={classes.divider} />
         <Typography component="p">Location</Typography>
         <Typography component="p">{`${trip.origin} - ${
           trip.destination
         }`}</Typography>
-        <Divider className={styles.divider} />
+        <Divider className={classes.divider} />
       </CardContent>
       <CardActions
-        className={classnames(styles.flex, !isPending && styles.justifyRight)}
+        className={classnames(classes.flex, !isPending && classes.justifyRight)}
         disableActionSpacing
       >
         {isPending && (
-          <div className={styles.flex}>
-            <div className={styles.button}>
+          <div className={classes.flex}>
+            <div className={classes.primaryCta}>
               <Button
                 variant="contained"
                 color="primary"
@@ -89,28 +118,32 @@ const TripCard = ({ trip }) => {
                 Approve
               </Button>
             </div>
-            <div className={styles.button}>
-              <Button
-                className={styles.button}
-                onClick={handleDeclineClick}
-                aria-label="Decline"
-              >
+            <div>
+              <Button onClick={handleDeclineClick} aria-label="Decline">
                 Decline
               </Button>
             </div>
           </div>
         )}
         <div>
-          <IconButton onClick={handleEdit} aria-label="Edit">
-            <Edit />
+          <IconButton
+            classes={{ root: classes.iconButton }}
+            onClick={handleEdit}
+            aria-label="Edit"
+          >
+            <Edit fontSize="small" />
           </IconButton>
           <IconButton
-            className={expanded ? styles.rotatedIcon : ''}
+            classes={{ root: classes.iconButton }}
+            className={classnames(
+              classes.icon,
+              expanded ? classes.rotatedIcon : ''
+            )}
             onClick={handleExpandClick}
             aria-expanded={expanded}
             aria-label="Show more"
           >
-            <ExpandMoreIcon />
+            <ExpandMoreIcon fontSize="small" />
           </IconButton>
         </div>
       </CardActions>
@@ -118,10 +151,10 @@ const TripCard = ({ trip }) => {
         <CardContent>
           <Typography component="p">Department</Typography>
           <Typography component="p">{trip.department}</Typography>
-          <Divider className={styles.divider} />
+          <Divider className={classes.divider} />
           <Typography component="p">Tickets:</Typography>
           {renderTicketLinks()}
-          <Divider className={styles.divider} />
+          <Divider className={classes.divider} />
           {/*TODO: decide how to display apartments*/}
           <Typography component="p">Accommodation</Typography>
           <Typography component="p">{trip.details.apartments}</Typography>
@@ -135,4 +168,4 @@ TripCard.propTypes = {
   trip: PropTypes.object.isRequired
 };
 
-export default TripCard;
+export default withStyles(styles)(TripCard);

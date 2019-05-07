@@ -1,8 +1,18 @@
-import React, {useEffect, useState} from 'react';
-import {getTrips} from '../../helpers/data-fetchers';
-import {TripCard} from '../../components/trip-card';
+import React, { useEffect, useState } from 'react';
+import { Grid } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import { getTrips } from '../../helpers/data-fetchers';
+import { TripCard } from '../../components/trip-card';
 
-const TripsView = () => {
+const styles = theme => ({
+  layout: {
+    width: 'auto',
+    marginLeft: theme.spacing.unit * 2,
+    marginRight: theme.spacing.unit * 2
+  }
+});
+
+const TripsView = ({ classes }) => {
   const [trips, setTrips] = useState([]);
 
   useEffect(() => {
@@ -17,10 +27,16 @@ const TripsView = () => {
   }, []);
 
   return (
-    <div>
-      {trips.map(trip => <TripCard key={trip.id} trip={trip}/>)}
+    <div className={classes.layout}>
+      <Grid container spacing={24}>
+        {trips.map(trip => (
+          <Grid key={trip.id} item xs={12} sm={12} md={4} lg={3}>
+            <TripCard trip={trip} />
+          </Grid>
+        ))}
+      </Grid>
     </div>
   );
 };
 
-export default TripsView;
+export default withStyles(styles)(TripsView);
