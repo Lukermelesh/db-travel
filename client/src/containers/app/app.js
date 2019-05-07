@@ -3,9 +3,11 @@ import { CssBaseline } from '@material-ui/core';
 import { Routes } from '../routes';
 import { Provider } from 'react-redux';
 import reducers from '../../reducers';
-import { createStore } from 'redux';
+import { applyMiddleware, compose, createStore } from 'redux';
+import thunk from 'redux-thunk';
 
-const store = createStore(reducers, {});
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)));
 
 class App extends Component {
   render() {
