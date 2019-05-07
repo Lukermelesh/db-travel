@@ -95,8 +95,8 @@ const TripCard = ({
   };
 
   const isPending = trip.details.status === tripStatus.PENDING;
-  const renderTicketLinks = () =>
-    trip.details.tickets.map((ticket, index) => (
+  const renderLinks = arr =>
+    arr.map((ticket, index) => (
       <Fragment key={index}>
         <a href={ticket.url} download>
           <Link component="p">{ticket.title}</Link>
@@ -105,6 +105,7 @@ const TripCard = ({
       </Fragment>
     ));
 
+  const acc = trip.details.accommodation;
   return (
     <Card>
       <CardHeader
@@ -175,11 +176,17 @@ const TripCard = ({
           <Typography component="p">{trip.department}</Typography>
           <Divider className={classes.divider} />
           <Typography component="p">Tickets:</Typography>
-          {renderTicketLinks()}
+          {renderLinks(trip.details.tickets)}
           <Divider className={classes.divider} />
-          {/*TODO: decide how to display apartments*/}
           <Typography component="p">Accommodation</Typography>
-          <Typography component="p">{trip.details.apartments}</Typography>
+          <Typography component="p">{acc.location}</Typography>
+          {acc.files && (
+            <Fragment>
+              <Divider className={classes.divider} />
+              <Typography component="p">Reservation</Typography>
+              {renderLinks(acc.files)}
+            </Fragment>
+          )}
         </CardContent>
       </Collapse>
     </Card>
