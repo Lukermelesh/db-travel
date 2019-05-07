@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Grid } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { getTrips } from '../../helpers/data-fetchers';
 import { TripCard } from '../../components/trip-card';
+import { fetchUserTrips } from '../../actions/fetch-user-trips';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 const styles = theme => ({
   layout: {
@@ -12,15 +14,12 @@ const styles = theme => ({
   }
 });
 
-const TripsView = ({ classes }) => {
-  const [trips, setTrips] = useState([]);
-
+const TripsView = ({ classes, fetchUserTrips, trips }) => {
   useEffect(() => {
     const fetchData = async () => {
       //TODO: don't hardcode userId!
-      const result = await getTrips('1');
-
-      setTrips(result.data);
+      //TODO: maybe implement a loader while loading trips
+      await fetchUserTrips(1);
     };
 
     fetchData();
@@ -39,4 +38,21 @@ const TripsView = ({ classes }) => {
   );
 };
 
-export default withStyles(styles)(TripsView);
+TripsView.propTypes = {
+  classes: PropTypes.object.isRequired,
+  fetchUserTrips: PropTypes.func.isRequired,
+  trips: PropTypes.array.isRequired
+};
+
+const mapStateToProps = state => ({
+  trips: state.trips
+});
+
+const mapDispatchToProps = {
+  fetchUserTrips
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(TripsView));

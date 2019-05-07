@@ -18,6 +18,9 @@ import Edit from '@material-ui/icons/Edit';
 import classnames from 'classnames';
 import * as tripStatus from '../../constants/trip-status';
 import { timestampToDate } from '../../helpers/date-helpers';
+import { connect } from 'react-redux';
+import { approveTrip } from '../../actions/approve-trip';
+import { rejectTrip } from '../../actions/reject-trip';
 
 const styles = theme => ({
   header: {
@@ -48,15 +51,13 @@ const styles = theme => ({
   }
 });
 
-const TripCard = ({ trip, classes }) => {
+const TripCard = ({ trip, classes, approveTrip, rejectTrip }) => {
   const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => setExpanded(!expanded);
 
-  //TODO: maybe think about using redux?
-  //TODO: finish wiring
-  const handleApproveClick = () => alert('approved');
-  const handleDeclineClick = () => alert('declined');
+  const handleApproveClick = () => approveTrip(trip.id);
+  const handleDeclineClick = () => rejectTrip(trip.id);
   const handleEdit = () => alert('edit');
 
   const getCardTitle = () => {
@@ -100,7 +101,6 @@ const TripCard = ({ trip, classes }) => {
         <Typography component="p">{`${trip.origin} - ${
           trip.destination
         }`}</Typography>
-        <Divider className={classes.divider} />
       </CardContent>
       <CardActions
         className={classnames(classes.flex, !isPending && classes.justifyRight)}
@@ -165,7 +165,19 @@ const TripCard = ({ trip, classes }) => {
 };
 
 TripCard.propTypes = {
-  trip: PropTypes.object.isRequired
+  trip: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
+  approveTrip: PropTypes.func.isRequired,
+  rejectTrip: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(TripCard);
+const mapDispatchToProps = {
+  approveTrip,
+  rejectTrip
+};
+
+//TODO: maybe use _.flow for better readability
+export default connect(
+  null,
+  mapDispatchToProps
+)(withStyles(styles)(TripCard));
