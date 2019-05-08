@@ -6,6 +6,7 @@ import {View} from '../view';
 
 const Routes = () => <Router>
   <Route path={routes.MY_TRIPS_ROUTE} exact render={(props) => <View active={routes.MY_TRIPS_ROUTE}><TripsView {...props}/></View>} />
+  {/*TODO: Make AllTripsView*/}
   <Route path={routes.ALL_TRIPS_ROUTE} exact render={(props) => <View active={routes.ALL_TRIPS_ROUTE}><TripsView {...props}/></View>} />
 </Router>;
 

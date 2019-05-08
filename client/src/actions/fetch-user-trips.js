@@ -14,7 +14,6 @@ export const fetchUserTrips = userId => {
   return async dispatch => {
     dispatch(fetchUserTripsRequest({ userId }));
     try {
-      //TODO: fix the hard coded url!
       //TODO: create a wrapper for requests which includes the cookie!
       const trips = await axios.get(`${apiBaseUrl}/trips/${userId}`);
       dispatch(fetchUserTripsSuccess(trips.data));
