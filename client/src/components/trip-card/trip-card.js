@@ -105,6 +105,11 @@ const TripCard = ({
       </Fragment>
     ));
 
+  const renderTravelers = () =>
+    trip.travelers.map(traveler => (
+      <Typography key={traveler.id} component="p">{traveler.name}</Typography>
+    ));
+
   const acc = trip.details.accommodation;
   return (
     <Card>
@@ -113,12 +118,15 @@ const TripCard = ({
         style={{ backgroundColor: getHeaderColor() }}
       />
       <CardContent>
-        <Typography component="p">Time</Typography>
+        <Typography variant="h6" component="p">Travelers</Typography>
+        {renderTravelers()}
+        <Divider className={classes.divider} />
+        <Typography variant="h6" component="p">Time</Typography>
         <Typography component="p">{`${timestampToDate(
           trip.from
         )} - ${timestampToDate(trip.to)}`}</Typography>
         <Divider className={classes.divider} />
-        <Typography component="p">Location</Typography>
+        <Typography variant="h6" component="p">Location</Typography>
         <Typography component="p">{`${trip.origin} - ${
           trip.destination
         }`}</Typography>
@@ -172,18 +180,18 @@ const TripCard = ({
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography component="p">Department</Typography>
+          <Typography variant="h6" component="p">Department</Typography>
           <Typography component="p">{trip.department}</Typography>
           <Divider className={classes.divider} />
-          <Typography component="p">Tickets:</Typography>
+          <Typography variant="h6" component="p">Tickets:</Typography>
           {renderLinks(trip.details.tickets)}
           <Divider className={classes.divider} />
-          <Typography component="p">Accommodation</Typography>
+          <Typography variant="h6" component="p">Accommodation</Typography>
           <Typography component="p">{acc.location}</Typography>
           {acc.files && (
             <Fragment>
               <Divider className={classes.divider} />
-              <Typography component="p">Reservation</Typography>
+              <Typography variant="h6" component="p">Reservation</Typography>
               {renderLinks(acc.files)}
             </Fragment>
           )}
