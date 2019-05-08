@@ -14,10 +14,12 @@ const styles = theme => ({
     justifyContent: 'space-between',
     backgroundColor: 'lightblue'
   },
-
   navLink: {
-    marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit
+  },
+  buttonPadding: {
+    paddingLeft: theme.spacing.unit,
+    paddingRight: theme.spacing.unit,
   }
 });
 
@@ -34,7 +36,7 @@ const menuItems = [
 const MenuBar = ({ active, classes, userType }) => {
   const makeButton = (text, to, isActive) => (
     <Link className={classes.navLink} key={to} to={to}>
-      <Button variant={isActive ? 'outlined' : 'text'}>{text}</Button>
+      <Button classes={{root: isActive && classes.buttonPadding}} variant={isActive ? 'outlined' : 'text'}>{text}</Button>
     </Link>
   );
 
