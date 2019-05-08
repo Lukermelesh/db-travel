@@ -2,6 +2,7 @@ import { APPROVE_TRIP_SUCCESS } from '../actions/approve-trip';
 import { FETCH_USER_TRIPS_SUCCESS } from '../actions/fetch-user-trips';
 import { APPROVED, REJECTED } from '../constants/trip-status';
 import { REJECT_TRIP_SUCCESS } from '../actions/reject-trip';
+import { FETCH_ALL_TRIPS_SUCCESS } from '../actions/fetch-all-trips';
 
 const updateTripStatus = (state, tripId, status) => {
   return state.map(trip =>
@@ -24,6 +25,7 @@ export default (state = [], action) => {
     case REJECT_TRIP_SUCCESS:
       return updateTripStatus(state, action.payload.tripId, REJECTED);
     case FETCH_USER_TRIPS_SUCCESS:
+    case FETCH_ALL_TRIPS_SUCCESS:
       return action.payload;
     default:
       return state;
