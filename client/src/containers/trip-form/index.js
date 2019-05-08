@@ -1,0 +1,1 @@
+export {default as TripForm} from './trip-form';
