@@ -1,19 +1,49 @@
 import React from 'react';
-import {Toolbar, Button, AppBar} from '@material-ui/core';
-import styles from './menu-bar.module.css';
-import {Link} from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import { Toolbar, Button, AppBar } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 import * as routes from '../../constants/routes';
 
-const menuItems = [
-  {to: routes.MY_TRIPS_ROUTE, text: 'My Trips'},
-  {to: routes.ALL_TRIPS_ROUTE, text: 'All Trips'},
-];
+const styles = theme => ({
+  root: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    backgroundColor: 'lightblue'
+  },
 
-const MenuBar = ({active}) => <AppBar><Toolbar className={styles.root}>
-  <div>
-  {menuItems.map(item => <Link className={styles.button} key={item.to} to={item.to}><Button variant={item.to === active ? 'outlined' : 'text'}>{item.text}</Button></Link>)}
-  </div>
-  <Button onClick={() => alert('should logout')}>Log Out</Button>
-</Toolbar></AppBar>;
+  navLink: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit
+  }
+});
 
-export default MenuBar;
+const menuItems = [{ to: routes.MY_TRIPS_ROUTE, text: 'My Trips' }];
+
+//TODO: make different navigation for mobile (with hamburger icon)
+const MenuBar = ({ active, classes }) => {
+  const makeButton = (text, to, isActive) => (
+    <Link className={classes.navLink} key={to} to={to}>
+      <Button variant={isActive ? 'outlined' : 'text'}>{text}</Button>
+    </Link>
+  );
+
+  return (
+    <AppBar style={{ marginBottom: 18 }} position="static">
+      <Toolbar className={classes.root}>
+        <div>
+          {menuItems.map(item =>
+            makeButton(item.text, item.to, item.to === active)
+          )}
+        </div>
+        <Button onClick={() => alert('should logout')}>Log Out</Button>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+MenuBar.propTypes = {
+  active: PropTypes.string.isRequired
+};
+
+export default withStyles(styles)(MenuBar);
