@@ -59,9 +59,10 @@ const TripCard = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
 
+  const isSingleTraveller = trip.details.length === 1;
   const handleExpandClick = () => setExpanded(!expanded);
   const getHeaderColor = () => {
-    switch (trip.details.status) {
+    switch (getTripStatus()) {
       case tripStatus.APPROVED:
         return 'lightskyblue';
       case tripStatus.COMPLETED:
@@ -80,7 +81,7 @@ const TripCard = ({
   const handleEdit = () => alert('edit');
 
   const getCardTitle = () => {
-    switch (trip.details.status) {
+    switch (getTripStatus()) {
       case tripStatus.APPROVED:
         return 'Approved';
       case tripStatus.COMPLETED:
@@ -94,7 +95,7 @@ const TripCard = ({
     }
   };
 
-  const isPending = trip.details.status === tripStatus.PENDING;
+  const isPending = trip.details[0].status === tripStatus.PENDING;
   const renderLinks = arr =>
     arr.map((ticket, index) => (
       <Fragment key={index}>
@@ -105,28 +106,40 @@ const TripCard = ({
       </Fragment>
     ));
 
-  const renderTravelers = () =>
-    trip.travelers.map(traveler => (
-      <Typography key={traveler.id} component="p">{traveler.name}</Typography>
+  const renderTravellers = () =>
+    trip.travellers.map(traveller => (
+      <Typography key={traveller.id} component="p">
+        {traveller.name}
+      </Typography>
     ));
 
-  const acc = trip.details.accommodation;
+  const getTripStatus = () => (isSingleTraveller ? trip.details[0].status : '');
+
+  const acc = trip.details[0].accommodation;
   return (
     <Card>
       <CardHeader
         title={getCardTitle()}
-        style={{ backgroundColor: getHeaderColor() }}
+        style={{
+          backgroundColor: getHeaderColor()
+        }}
       />
       <CardContent>
-        <Typography variant="h6" component="p">Travelers</Typography>
-        {renderTravelers()}
+        <Typography variant="h6" component="p">
+          Travellers
+        </Typography>
+        {renderTravellers()}
         <Divider className={classes.divider} />
-        <Typography variant="h6" component="p">Time</Typography>
+        <Typography variant="h6" component="p">
+          Time
+        </Typography>
         <Typography component="p">{`${timestampToDate(
           trip.from
         )} - ${timestampToDate(trip.to)}`}</Typography>
         <Divider className={classes.divider} />
-        <Typography variant="h6" component="p">Location</Typography>
+        <Typography variant="h6" component="p">
+          Location
+        </Typography>
         <Typography component="p">{`${trip.origin} - ${
           trip.destination
         }`}</Typography>
@@ -180,20 +193,35 @@ const TripCard = ({
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography variant="h6" component="p">Department</Typography>
-          <Typography component="p">{trip.department}</Typography>
-          <Divider className={classes.divider} />
-          <Typography variant="h6" component="p">Tickets:</Typography>
-          {renderLinks(trip.details.tickets)}
-          <Divider className={classes.divider} />
-          <Typography variant="h6" component="p">Accommodation</Typography>
-          <Typography component="p">{acc.location}</Typography>
-          {acc.files && (
+          {isSingleTraveller ? (
             <Fragment>
+              <Typography variant="h6" component="p">
+                Department
+              </Typography>
+              <Typography component="p">{trip.details[0].department}</Typography>
               <Divider className={classes.divider} />
-              <Typography variant="h6" component="p">Reservation</Typography>
-              {renderLinks(acc.files)}
+              <Typography variant="h6" component="p">
+                Tickets:
+              </Typography>
+              {renderLinks(trip.details[0].tickets)}
+              <Divider className={classes.divider} />
+              <Typography variant="h6" component="p">
+                Accommodation
+              </Typography>
+              <Typography component="p">{acc.location}</Typography>
+              {acc.files && (
+                <Fragment>
+                  <Divider className={classes.divider} />
+                  <Typography variant="h6" component="p">
+                    Reservation
+                  </Typography>
+                  {renderLinks(acc.files)}
+                </Fragment>
+              )}
             </Fragment>
+          ) : (
+            //TODO: Implement accordion!
+            <div>Implement accordion!</div>
           )}
         </CardContent>
       </Collapse>

@@ -1,7 +1,6 @@
 import { createAction } from 'redux-actions';
 import axios from 'axios';
 import { apiBaseUrl } from '../constants/env';
-import { CREATED } from '../constants/trip-status';
 import { getUserId } from '../selectors/user-data';
 
 export const CREATE_TRIP_REQUEST = 'createTrip/FETCH_REQUEST';

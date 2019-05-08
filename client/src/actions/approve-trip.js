@@ -18,11 +18,12 @@ export const approveTrip = tripId => {
     try {
       //TODO: create a wrapper for requests which includes the cookie!
       const state = getState();
+      const userId = getUserId(state);
       await axios.post(`${apiBaseUrl}/trip/${tripId}`, {
         action: APPROVED,
-        userId: getUserId(state)
+        userId
       });
-      dispatch(approveTripSuccess({ tripId }));
+      dispatch(approveTripSuccess({ tripId, userId }));
     } catch {
       dispatch(approveTripFailure());
     }
