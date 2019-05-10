@@ -13,7 +13,6 @@ import {
   Link
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Edit from '@material-ui/icons/Edit';
 import classnames from 'classnames';
 import * as tripStatus from '../../constants/trip-status';
@@ -23,6 +22,8 @@ import { approveTrip } from '../../actions/approve-trip';
 import { rejectTrip } from '../../actions/reject-trip';
 import { getUserType } from '../../selectors/user-data';
 import { ADMIN, ORGANIZER } from '../../constants/user-types';
+import { ExpandMoreButton } from '../expand-more-button';
+import Links from '../links/links';
 
 const styles = theme => ({
   primaryCta: {
@@ -34,15 +35,6 @@ const styles = theme => ({
   },
   justifyRight: {
     justifyContent: 'flex-end'
-  },
-  rotatedIcon: {
-    transform: 'rotate(180deg)'
-  },
-  iconButton: {
-    padding: theme.spacing.unit
-  },
-  icon: {
-    transition: 'transform 200ms'
   },
   divider: {
     marginBottom: theme.spacing.unit * 2,
@@ -96,15 +88,6 @@ const TripCard = ({
   };
 
   const isPending = trip.details[0].status === tripStatus.PENDING;
-  const renderLinks = arr =>
-    arr.map((ticket, index) => (
-      <Fragment key={index}>
-        <a href={ticket.url} download>
-          <Link component="p">{ticket.title}</Link>
-        </a>
-        <br />
-      </Fragment>
-    ));
 
   const renderTravellers = () =>
     trip.travellers.map(traveller => (
@@ -177,18 +160,7 @@ const TripCard = ({
               <Edit />
             </IconButton>
           )}
-          <IconButton
-            classes={{ root: classes.iconButton }}
-            className={classnames(
-              classes.icon,
-              expanded ? classes.rotatedIcon : ''
-            )}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="Show more"
-          >
-            <ExpandMoreIcon />
-          </IconButton>
+          <ExpandMoreButton isOpen={expanded} onClick={handleExpandClick} />
         </div>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -198,12 +170,14 @@ const TripCard = ({
               <Typography variant="h6" component="p">
                 Department
               </Typography>
-              <Typography component="p">{trip.details[0].department}</Typography>
+              <Typography component="p">
+                {trip.details[0].department}
+              </Typography>
               <Divider className={classes.divider} />
               <Typography variant="h6" component="p">
                 Tickets:
               </Typography>
-              {renderLinks(trip.details[0].tickets)}
+              <Links links={trip.details[0].tickets} />
               <Divider className={classes.divider} />
               <Typography variant="h6" component="p">
                 Accommodation
@@ -215,7 +189,7 @@ const TripCard = ({
                   <Typography variant="h6" component="p">
                     Reservation
                   </Typography>
-                  {renderLinks(acc.files)}
+                  <Links links={acc.files} />
                 </Fragment>
               )}
             </Fragment>

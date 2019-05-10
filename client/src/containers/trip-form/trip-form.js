@@ -13,6 +13,16 @@ import { InlineDatePicker } from 'material-ui-pickers';
 import { fetchLocationList } from '../../actions/fetch-location-list';
 import List from '@material-ui/core/List/List';
 import ListItem from '@material-ui/core/ListItem/ListItem';
+import Collapse from '@material-ui/core/Collapse/Collapse';
+import ListItemText from '@material-ui/core/ListItemText/ListItemText';
+import { Divider } from '@material-ui/core';
+import Links from '../../components/links/links';
+import IconButton from '@material-ui/core/IconButton/IconButton';
+import AddCircle from '@material-ui/icons/AddCircle';
+import RemoveCircle from '@material-ui/icons/RemoveCircle';
+import { UploadButton } from '../../components/upload-button';
+import { ExpandMoreButton } from '../../components/expand-more-button';
+import { uniqBy, flow } from 'lodash';
 
 const styles = theme => ({
   layout: {
@@ -42,6 +52,32 @@ const styles = theme => ({
   button: {
     marginTop: theme.spacing.unit * 3,
     marginLeft: theme.spacing.unit
+  },
+  nested: {
+    padding: 10,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    backgroundColor: 'lavender'
+  },
+  divider: {
+    marginBottom: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 2
+  },
+  nestedHeader: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  rotatedIcon: {
+    transform: 'rotate(180deg)'
+  },
+  iconButton: {
+    padding: theme.spacing.unit
+  },
+  icon: {
+    transition: 'transform 200ms'
   }
 });
 
@@ -54,7 +90,7 @@ const TripForm = ({
 }) => {
   const [userSuggestions, setUserSuggestions] = useState([]);
   const [locationSuggestions, setLocationSuggestions] = useState([]);
-  const [selectedUser, setSelectedUser] = useState({});
+  const [selectedUser, setSelectedUser] = useState();
   const [travellerDetails, setTravellerDetails] = useState([]);
   const [origin, setOrigin] = useState({});
   const [destination, setDestination] = useState({});
@@ -87,15 +123,110 @@ const TripForm = ({
   const handleCreateTrip = () => createTrip();
   const handleCancel = () => history.goBack();
   const handleAddTraveller = () =>
-    setTravellerDetails([...travellerDetails, selectedUser]);
+    selectedUser &&
+    // TODO: maybe show error when trying to add same user twice
+    !travellerDetails.find(t => t.value === selectedUser.value) &&
+    setTravellerDetails([
+      ...travellerDetails,
+      { ...selectedUser, isOpen: false, tickets: [], accommodation: {} }
+    ]);
+  const handleDeleteTraveller = userId => () => {
+    debugger;
+    console.log('SIEMKA!');
+    setTravellerDetails(travellerDetails.filter(t => t.value !== userId));
+  };
+
+  const handleTravellerClick = id => () =>
+    setTravellerDetails(
+      travellerDetails.map(t =>
+        t.value === id ? { ...t, isOpen: !t.isOpen } : t
+      )
+    );
+
+  // TODO: SHOW ERROR WHEN TRYING TO UPLOAD FILE WITH THE SAME NAME
+  // TODO: OR CHANGE THE NAME WHEN ADDING A FILE WITH DUPLICATE NAME
+  const setTickets = (userId, tickets, replace) => {
+    setTravellerDetails(
+      travellerDetails.map(t =>
+        t.value === userId
+          ? {
+              ...t,
+              tickets: replace
+                ? tickets
+                : uniqBy([...t.tickets, ...tickets], 'name')
+            }
+          : t
+      )
+    );
+  };
+  const handleTicketUpload = userId => ({ target }) => {
+    //TODO: Don't forget to remove window.a!
+    window.a = target.files;
+    setTickets(userId, Array.from(target.files));
+  };
+  const handleTicketDelete = userId => ({ title }) => {
+    const tickets = travellerDetails.find(t => t.value === userId).tickets;
+    setTickets(userId, tickets.filter(t => t.name !== title), true);
+  };
+
+  const getFileLinks = files => files.map(t => ({ title: t.name }));
 
   const renderTravellers = () => (
     <List>
-      {travellerDetails.map(traveller => (
-        <ListItem key={traveller.id}>
-          <Typography>{traveller.label}</Typography>
-        </ListItem>
-      ))}
+      {travellerDetails.map(
+        ({ value: userId, label, isOpen, tickets, accommodation }) => (
+          <Fragment key={userId}>
+            <ListItem divider>
+              <ListItemText primary={label} />
+              <IconButton onClick={handleDeleteTraveller(userId)}>
+                <RemoveCircle />
+              </IconButton>
+              <ExpandMoreButton onClick={handleTravellerClick(userId)} isOpen={isOpen}/>
+            </ListItem>
+            <Collapse in={isOpen} timeout="auto" unmountOnExit>
+              <div className={classes.nested}>
+                <div className={classes.nestedHeader}>
+                  <Typography variant="h6" component="p">
+                    Tickets
+                  </Typography>
+                  <UploadButton
+                    id={`traveller-${userId}-ticket`}
+                    onFileUpload={handleTicketUpload(userId)}
+                  />
+                </div>
+                <Links
+                  allowDelete
+                  links={getFileLinks(tickets)}
+                  onDeleteClick={handleTicketDelete(userId)}
+                />
+                <Divider className={classes.divider} />
+                <div className={classes.nestedHeader}>
+                  <Typography variant="h6" component="p">
+                    Accommodation
+                  </Typography>
+                  {/*TODO: add accommodation screen/modal/whatever!*/}
+                  <IconButton component="span">
+                    <AddCircle />
+                  </IconButton>
+                </div>
+                <Typography component="p">{accommodation.location}</Typography>
+                {accommodation.files && (
+                  <Fragment>
+                    <Divider className={classes.divider} />
+                    <Typography variant="h6" component="p">
+                      Reservation
+                    </Typography>
+                    <Links
+                      allowDelete
+                      links={getFileLinks(accommodation.files)}
+                    />
+                  </Fragment>
+                )}
+              </div>
+            </Collapse>
+          </Fragment>
+        )
+      )}
     </List>
   );
 
@@ -162,7 +293,9 @@ const TripForm = ({
                 Add
               </Button>
             </Grid>
-            {renderTravellers()}
+            <Grid item xs={12}>
+              {renderTravellers()}
+            </Grid>
           </Grid>
           <div className={classes.buttons}>
             <Button className={classes.button} onClick={handleCancel}>
@@ -196,7 +329,10 @@ const mapDispatchToProps = {
   fetchLocationList
 };
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(withStyles(styles)(TripForm));
+export default flow(
+  connect(
+    null,
+    mapDispatchToProps
+  ),
+  withStyles(styles)
+)(TripForm);
