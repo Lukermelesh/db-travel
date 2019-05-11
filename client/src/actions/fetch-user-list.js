@@ -16,7 +16,7 @@ export const fetchUserList = () => {
     try {
       //TODO: create a wrapper for requests which includes the cookie!
       //TODO:[server] Do not suggest users if they are busy during the time of travel
-      const users = await axios.get(`${apiBaseUrl}/user-list`);
+      const users = await axios.get(`${apiBaseUrl}/users`);
       dispatch(fetchUserListSuccess(users.data));
       return users.data;
     } catch {

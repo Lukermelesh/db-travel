@@ -15,7 +15,7 @@ export const fetchLocationList = () => {
     dispatch(fetchLocationListRequest());
     try {
       //TODO: create a wrapper for requests which includes the cookie!
-      const locations = await axios.get(`${apiBaseUrl}/location-list`);
+      const locations = await axios.get(`${apiBaseUrl}/locations`);
       dispatch(fetchLocationListSuccess(locations.data));
       return locations.data;
     } catch {

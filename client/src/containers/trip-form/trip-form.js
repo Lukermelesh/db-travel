@@ -18,11 +18,11 @@ import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import { Divider } from '@material-ui/core';
 import Links from '../../components/links/links';
 import IconButton from '@material-ui/core/IconButton/IconButton';
-import AddCircle from '@material-ui/icons/AddCircle';
 import RemoveCircle from '@material-ui/icons/RemoveCircle';
 import { UploadButton } from '../../components/upload-button';
 import { ExpandMoreButton } from '../../components/expand-more-button';
 import { uniqBy, flow } from 'lodash';
+import { fetchApartmentList } from '../../actions/fetch-apartment-list';
 
 const styles = theme => ({
   layout: {
@@ -70,14 +70,8 @@ const styles = theme => ({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  rotatedIcon: {
-    transform: 'rotate(180deg)'
-  },
-  iconButton: {
-    padding: theme.spacing.unit
-  },
-  icon: {
-    transition: 'transform 200ms'
+  fullWidth: {
+    width: '100%'
   }
 });
 
@@ -86,14 +80,16 @@ const TripForm = ({
   createTrip,
   fetchUserList,
   fetchLocationList,
+  fetchApartmentList,
   history
 }) => {
   const [userSuggestions, setUserSuggestions] = useState([]);
+  const [apartmentsSuggestions, setApartmentsSuggestions] = useState([]);
   const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [selectedUser, setSelectedUser] = useState();
   const [travellerDetails, setTravellerDetails] = useState([]);
   const [origin, setOrigin] = useState({});
-  const [destination, setDestination] = useState({});
+  const [destination, setDestination] = useState();
 
   const [departureDate, handleDepartureDateChange] = useState(new Date());
   const [returnDate, handleReturnDateChange] = useState(new Date());
@@ -110,8 +106,8 @@ const TripForm = ({
       const locationList = await fetchLocationList();
       setLocationSuggestions(
         locationList.map(location => ({
-          label: location,
-          value: location
+          label: location.name,
+          value: location.id
         }))
       );
     };
@@ -119,6 +115,20 @@ const TripForm = ({
     fetchUserSuggestions();
     fetchLocationSuggestions();
   }, []);
+
+  useEffect(() => {
+    const fetchApartmentsSuggestions = async () => {
+      const apartmentList = await fetchApartmentList(destination.value);
+      setApartmentsSuggestions(
+        apartmentList.map(apt => ({ label: apt.name, value: apt.id }))
+      );
+    };
+
+    if (destination) {
+      fetchApartmentsSuggestions();
+      resetApartmentsForAllTravellers();
+    }
+  }, [destination]);
 
   const handleCreateTrip = () => createTrip();
   const handleCancel = () => history.goBack();
@@ -131,8 +141,6 @@ const TripForm = ({
       { ...selectedUser, isOpen: false, tickets: [], accommodation: {} }
     ]);
   const handleDeleteTraveller = userId => () => {
-    debugger;
-    console.log('SIEMKA!');
     setTravellerDetails(travellerDetails.filter(t => t.value !== userId));
   };
 
@@ -160,8 +168,6 @@ const TripForm = ({
     );
   };
   const handleTicketUpload = userId => ({ target }) => {
-    //TODO: Don't forget to remove window.a!
-    window.a = target.files;
     setTickets(userId, Array.from(target.files));
   };
   const handleTicketDelete = userId => ({ title }) => {
@@ -170,6 +176,20 @@ const TripForm = ({
   };
 
   const getFileLinks = files => files.map(t => ({ title: t.name }));
+
+  const setApartmentForTraveller = userId => selection => {
+    setTravellerDetails(
+      travellerDetails.map(t =>
+        t.value === userId ? { ...t, accommodation: selection } : t
+      )
+    );
+  };
+
+  const resetApartmentsForAllTravellers = () => {
+    setTravellerDetails(
+      travellerDetails.map(t => ({ ...t, accommodation: {} }))
+    );
+  };
 
   const renderTravellers = () => (
     <List>
@@ -181,7 +201,10 @@ const TripForm = ({
               <IconButton onClick={handleDeleteTraveller(userId)}>
                 <RemoveCircle />
               </IconButton>
-              <ExpandMoreButton onClick={handleTravellerClick(userId)} isOpen={isOpen}/>
+              <ExpandMoreButton
+                onClick={handleTravellerClick(userId)}
+                isOpen={isOpen}
+              />
             </ListItem>
             <Collapse in={isOpen} timeout="auto" unmountOnExit>
               <div className={classes.nested}>
@@ -200,15 +223,15 @@ const TripForm = ({
                   onDeleteClick={handleTicketDelete(userId)}
                 />
                 <Divider className={classes.divider} />
-                <div className={classes.nestedHeader}>
-                  <Typography variant="h6" component="p">
-                    Accommodation
-                  </Typography>
-                  {/*TODO: add accommodation screen/modal/whatever!*/}
-                  <IconButton component="span">
-                    <AddCircle />
-                  </IconButton>
-                </div>
+                <Typography variant="h6" component="p">
+                  Accommodation
+                </Typography>
+                <Select
+                  className={classes.fullWidth}
+                  onChange={setApartmentForTraveller(userId)}
+                  options={apartmentsSuggestions}
+                  placeholder="Apartment"
+                />
                 <Typography component="p">{accommodation.location}</Typography>
                 {accommodation.files && (
                   <Fragment>
@@ -258,6 +281,7 @@ const TripForm = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <InlineDatePicker
+                className={classes.fullWidth}
                 disablePast
                 label="From"
                 value={departureDate}
@@ -266,6 +290,7 @@ const TripForm = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <InlineDatePicker
+                className={classes.fullWidth}
                 minDate={departureDate}
                 label="Until"
                 value={returnDate}
@@ -277,7 +302,7 @@ const TripForm = ({
                 Traveller Details
               </Typography>
             </Grid>
-            <Grid item xs={10}>
+            <Grid item xs={9} sm={10}>
               <Select
                 onChange={setSelectedUser}
                 options={userSuggestions}
@@ -320,13 +345,15 @@ TripForm.propTypes = {
   classes: PropTypes.object.isRequired,
   createTrip: PropTypes.func.isRequired,
   fetchUserList: PropTypes.func.isRequired,
-  fetchLocationList: PropTypes.func.isRequired
+  fetchLocationList: PropTypes.func.isRequired,
+  fetchApartmentList: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = {
   createTrip,
   fetchUserList,
-  fetchLocationList
+  fetchLocationList,
+  fetchApartmentList
 };
 
 export default flow(
