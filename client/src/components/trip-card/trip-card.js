@@ -13,7 +13,6 @@ import {
   Link
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Edit from '@material-ui/icons/Edit';
 import classnames from 'classnames';
 import * as tripStatus from '../../constants/trip-status';
@@ -23,6 +22,8 @@ import { approveTrip } from '../../actions/approve-trip';
 import { rejectTrip } from '../../actions/reject-trip';
 import { getUserType } from '../../selectors/user-data';
 import { ADMIN, ORGANIZER } from '../../constants/user-types';
+import { ExpandMoreButton } from '../expand-more-button';
+import Links from '../links/links';
 
 const styles = theme => ({
   primaryCta: {
@@ -34,15 +35,6 @@ const styles = theme => ({
   },
   justifyRight: {
     justifyContent: 'flex-end'
-  },
-  rotatedIcon: {
-    transform: 'rotate(180deg)'
-  },
-  iconButton: {
-    padding: theme.spacing.unit
-  },
-  icon: {
-    transition: 'transform 200ms'
   },
   divider: {
     marginBottom: theme.spacing.unit * 2,
@@ -59,9 +51,10 @@ const TripCard = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
 
+  const isSingleTraveller = trip.details.length === 1;
   const handleExpandClick = () => setExpanded(!expanded);
   const getHeaderColor = () => {
-    switch (trip.details.status) {
+    switch (getTripStatus()) {
       case tripStatus.APPROVED:
         return 'lightskyblue';
       case tripStatus.COMPLETED:
@@ -80,7 +73,7 @@ const TripCard = ({
   const handleEdit = () => alert('edit');
 
   const getCardTitle = () => {
-    switch (trip.details.status) {
+    switch (getTripStatus()) {
       case tripStatus.APPROVED:
         return 'Approved';
       case tripStatus.COMPLETED:
@@ -94,31 +87,42 @@ const TripCard = ({
     }
   };
 
-  const isPending = trip.details.status === tripStatus.PENDING;
-  const renderLinks = arr =>
-    arr.map((ticket, index) => (
-      <Fragment key={index}>
-        <a href={ticket.url} download>
-          <Link component="p">{ticket.title}</Link>
-        </a>
-        <br />
-      </Fragment>
+  const isPending = trip.details[0].status === tripStatus.PENDING;
+
+  const renderTravellers = () =>
+    trip.travellers.map(traveller => (
+      <Typography key={traveller.id} component="p">
+        {traveller.name}
+      </Typography>
     ));
 
-  const acc = trip.details.accommodation;
+  const getTripStatus = () => (isSingleTraveller ? trip.details[0].status : '');
+
+  const acc = trip.details[0].accommodation;
   return (
     <Card>
       <CardHeader
         title={getCardTitle()}
-        style={{ backgroundColor: getHeaderColor() }}
+        style={{
+          backgroundColor: getHeaderColor()
+        }}
       />
       <CardContent>
-        <Typography component="p">Time</Typography>
+        <Typography variant="h6" component="p">
+          Travellers
+        </Typography>
+        {renderTravellers()}
+        <Divider className={classes.divider} />
+        <Typography variant="h6" component="p">
+          Time
+        </Typography>
         <Typography component="p">{`${timestampToDate(
           trip.from
         )} - ${timestampToDate(trip.to)}`}</Typography>
         <Divider className={classes.divider} />
-        <Typography component="p">Location</Typography>
+        <Typography variant="h6" component="p">
+          Location
+        </Typography>
         <Typography component="p">{`${trip.origin} - ${
           trip.destination
         }`}</Typography>
@@ -156,36 +160,42 @@ const TripCard = ({
               <Edit />
             </IconButton>
           )}
-          <IconButton
-            classes={{ root: classes.iconButton }}
-            className={classnames(
-              classes.icon,
-              expanded ? classes.rotatedIcon : ''
-            )}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="Show more"
-          >
-            <ExpandMoreIcon />
-          </IconButton>
+          <ExpandMoreButton isOpen={expanded} onClick={handleExpandClick} />
         </div>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography component="p">Department</Typography>
-          <Typography component="p">{trip.department}</Typography>
-          <Divider className={classes.divider} />
-          <Typography component="p">Tickets:</Typography>
-          {renderLinks(trip.details.tickets)}
-          <Divider className={classes.divider} />
-          <Typography component="p">Accommodation</Typography>
-          <Typography component="p">{acc.location}</Typography>
-          {acc.files && (
+          {isSingleTraveller ? (
             <Fragment>
+              <Typography variant="h6" component="p">
+                Department
+              </Typography>
+              <Typography component="p">
+                {trip.details[0].department}
+              </Typography>
               <Divider className={classes.divider} />
-              <Typography component="p">Reservation</Typography>
-              {renderLinks(acc.files)}
+              <Typography variant="h6" component="p">
+                Tickets:
+              </Typography>
+              <Links links={trip.details[0].tickets} />
+              <Divider className={classes.divider} />
+              <Typography variant="h6" component="p">
+                Accommodation
+              </Typography>
+              <Typography component="p">{acc.location}</Typography>
+              {acc.files && (
+                <Fragment>
+                  <Divider className={classes.divider} />
+                  <Typography variant="h6" component="p">
+                    Reservation
+                  </Typography>
+                  <Links links={acc.files} />
+                </Fragment>
+              )}
             </Fragment>
+          ) : (
+            //TODO: Implement accordion!
+            <div>Implement accordion!</div>
           )}
         </CardContent>
       </Collapse>

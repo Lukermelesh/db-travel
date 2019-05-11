@@ -1,3 +1,3 @@
 export const REGULAR = 'regular';
 export const ORGANIZER = 'organizer';
-export const ADMIN = 'organizer';
+export const ADMIN = 'admin';
