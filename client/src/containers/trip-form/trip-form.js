@@ -97,14 +97,14 @@ const TripForm = ({
   useEffect(() => {
     const fetchUserSuggestions = async () => {
       const userList = await fetchUserList();
-      setUserSuggestions(
+      userList && setUserSuggestions(
         userList.map(user => ({ label: user.name, value: user.id }))
       );
     };
 
     const fetchLocationSuggestions = async () => {
       const locationList = await fetchLocationList();
-      setLocationSuggestions(
+      locationList && setLocationSuggestions(
         locationList.map(location => ({
           label: location.name,
           value: location.id
@@ -119,7 +119,7 @@ const TripForm = ({
   useEffect(() => {
     const fetchApartmentsSuggestions = async () => {
       const apartmentList = await fetchApartmentList(destination.value);
-      setApartmentsSuggestions(
+      apartmentList && setApartmentsSuggestions(
         apartmentList.map(apt => ({ label: apt.name, value: apt.id }))
       );
     };
