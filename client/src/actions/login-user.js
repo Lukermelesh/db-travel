@@ -15,9 +15,11 @@ export const loginUser = (userName, password) => {
     dispatch(loginUserRequest());
     try {
       //TODO: create a wrapper for requests which includes the cookie!
-      //TODO: update url
-      //TODO: send the userName and password
-      const result = await axios.post(`${apiBaseUrl}/`);
+      const result = await axios.post(`${apiBaseUrl}/login`, {
+        userName,
+        password
+      });
+
       dispatch(loginUserSuccess(result.data));
     } catch {
       dispatch(loginUserFailure());
