@@ -4,6 +4,7 @@ import TextField from '@material-ui/core/TextField/TextField';
 import Button from '@material-ui/core/Button/Button';
 import { withStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
+import { loginUser } from '../../actions/login-user';
 
 const styles = theme => ({
   form: {

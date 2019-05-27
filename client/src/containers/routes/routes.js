@@ -1,28 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { TripsView } from '../trips-view';
 import * as routes from '../../constants/routes';
 import { View } from '../view';
 import TripForm from '../trip-form/trip-form';
-import { LoginView } from '../login-view';
-import { connect } from 'react-redux';
-import { isLoggedIn } from '../../selectors/user-data';
 
-const Routes = ({ isLoggedIn }) => (
+const Routes = () => (
   <Router>
     <Route
       path={routes.MY_TRIPS_ROUTE}
       exact
-      render={props =>
-        isLoggedIn ? (
-          <View active={routes.MY_TRIPS_ROUTE}>
-            <TripsView {...props} />
-          </View>
-        ) : (
-          <LoginView />
-        )
-      }
+      render={props => (
+        <View active={routes.MY_TRIPS_ROUTE}>
+          <TripsView {...props} />
+        </View>
+      )}
     />
     <Route
       path={routes.ALL_TRIPS_ROUTE}
@@ -45,12 +37,4 @@ const Routes = ({ isLoggedIn }) => (
   </Router>
 );
 
-Routes.propTypes = {
-  isLoggedIn: PropTypes.bool.isRequired
-};
-
-const mapStateToProps = state => ({
-  isLoggedIn: isLoggedIn(state)
-});
-
-export default connect(mapStateToProps)(Routes);
+export default Routes;
