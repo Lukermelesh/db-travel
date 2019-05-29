@@ -1,8 +1,7 @@
 import { createAction } from 'redux-actions';
-import axios from 'axios';
-import { apiBaseUrl } from '../constants/env';
 import { APPROVED } from '../constants/trip-status';
 import { getUserId } from '../selectors/user-data';
+import { post } from '../helpers/request-helpers';
 
 export const APPROVE_TRIP_REQUEST = 'approveTrip/FETCH_REQUEST';
 export const APPROVE_TRIP_SUCCESS = 'approveTrip/FETCH_SUCCESS';
@@ -16,10 +15,9 @@ export const approveTrip = tripId => {
   return async (dispatch, getState) => {
     dispatch(approveTripRequest());
     try {
-      //TODO: create a wrapper for requests which includes the cookie!
       const state = getState();
       const userId = getUserId(state);
-      await axios.post(`${apiBaseUrl}/trip/${tripId}`, {
+      await post(`/trip/${tripId}`, {
         action: APPROVED,
         userId
       });

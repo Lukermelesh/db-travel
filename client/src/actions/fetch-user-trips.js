@@ -1,6 +1,5 @@
 import { createAction } from 'redux-actions';
-import axios from 'axios';
-import { apiBaseUrl } from '../constants/env';
+import { get } from '../helpers/request-helpers';
 
 export const FETCH_USER_TRIPS_REQUEST = 'userTrips/FETCH_REQUEST';
 export const FETCH_USER_TRIPS_SUCCESS = 'userTrips/FETCH_SUCCESS';
@@ -14,8 +13,7 @@ export const fetchUserTrips = userId => {
   return async dispatch => {
     dispatch(fetchUserTripsRequest({ userId }));
     try {
-      //TODO: create a wrapper for requests which includes the cookie!
-      const trips = await axios.get(`${apiBaseUrl}/trips/${userId}`);
+      const trips = await get(`/trips/${userId}`);
       dispatch(fetchUserTripsSuccess(trips.data));
     } catch {
       dispatch(fetchUserTripsFailure());
