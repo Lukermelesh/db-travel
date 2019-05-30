@@ -88,7 +88,7 @@ const TripForm = ({
   const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [selectedUser, setSelectedUser] = useState();
   const [travellerDetails, setTravellerDetails] = useState([]);
-  const [origin, setOrigin] = useState({});
+  const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
 
   const [departureDate, handleDepartureDateChange] = useState(new Date());
@@ -97,19 +97,21 @@ const TripForm = ({
   useEffect(() => {
     const fetchUserSuggestions = async () => {
       const userList = await fetchUserList();
-      userList && setUserSuggestions(
-        userList.map(user => ({ label: user.name, value: user.id }))
-      );
+      userList &&
+        setUserSuggestions(
+          userList.map(user => ({ label: user.name, value: user.id }))
+        );
     };
 
     const fetchLocationSuggestions = async () => {
       const locationList = await fetchLocationList();
-      locationList && setLocationSuggestions(
-        locationList.map(location => ({
-          label: location.name,
-          value: location.id
-        }))
-      );
+      locationList &&
+        setLocationSuggestions(
+          locationList.map(location => ({
+            label: location.name,
+            value: location.id
+          }))
+        );
     };
 
     fetchUserSuggestions();
@@ -119,9 +121,10 @@ const TripForm = ({
   useEffect(() => {
     const fetchApartmentsSuggestions = async () => {
       const apartmentList = await fetchApartmentList(destination.value);
-      apartmentList && setApartmentsSuggestions(
-        apartmentList.map(apt => ({ label: apt.name, value: apt.id }))
-      );
+      apartmentList &&
+        setApartmentsSuggestions(
+          apartmentList.map(apt => ({ label: apt.name, value: apt.id }))
+        );
     };
 
     if (destination) {
@@ -130,7 +133,18 @@ const TripForm = ({
     }
   }, [destination]);
 
-  const handleCreateTrip = () => createTrip();
+  const getFormattedTime = date => Math.floor(date.getTime() / 1000);
+
+  const handleCreateTrip = () => {
+    const tripData = {
+      origin: origin.label,
+      destination: destination.label,
+      from: getFormattedTime(departureDate),
+      to: getFormattedTime(returnDate)
+    };
+    const travellerDetails = {};
+    createTrip(tripData, travellerDetails);
+  };
   const handleCancel = () => history.goBack();
   const handleAddTraveller = () =>
     selectedUser &&
@@ -273,9 +287,11 @@ const TripForm = ({
             <Grid item xs={12} sm={6}>
               <Select
                 onChange={setDestination}
-                options={locationSuggestions.filter(
-                  s => s.value !== origin.value
-                )}
+                options={
+                  origin
+                    ? locationSuggestions.filter(s => s.value !== origin.value)
+                    : locationSuggestions
+                }
                 placeholder="Destination"
               />
             </Grid>

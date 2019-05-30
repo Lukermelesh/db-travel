@@ -19,7 +19,7 @@ export const fetchLocationList = () => {
   return async dispatch => {
     dispatch(fetchLocationListRequest());
     try {
-      const locations = await get(`/locations`);
+      const locations = await get(`/location/all`);
       dispatch(fetchLocationListSuccess(locations.data));
       return locations.data;
     } catch {
