@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField/TextField';
 import Button from '@material-ui/core/Button/Button';
@@ -17,7 +17,13 @@ const styles = theme => ({
 });
 
 const LoginForm = ({ classes, loginUser }) => {
-  const handleLoginClick = () => loginUser();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const updateEmail = event => setEmail(event.target.value);
+  const updatePassword = event => setPassword(event.target.value);
+
+  const handleLoginClick = () => loginUser(email, password);
 
   return (
     <form className={classes.form} noValidate>
@@ -31,6 +37,7 @@ const LoginForm = ({ classes, loginUser }) => {
         name="email"
         autoComplete="email"
         autoFocus
+        onChange={updateEmail}
       />
       <TextField
         variant="outlined"
@@ -42,6 +49,7 @@ const LoginForm = ({ classes, loginUser }) => {
         type="password"
         id="password"
         autoComplete="current-password"
+        onChange={updatePassword}
       />
       <Button
         onClick={handleLoginClick}
