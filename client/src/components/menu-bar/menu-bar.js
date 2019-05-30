@@ -19,7 +19,7 @@ const styles = theme => ({
   },
   buttonPadding: {
     paddingLeft: theme.spacing.unit,
-    paddingRight: theme.spacing.unit,
+    paddingRight: theme.spacing.unit
   }
 });
 
@@ -29,15 +29,20 @@ const menuItems = [
     text: 'My Trips',
     forUsers: [REGULAR, ORGANIZER, ADMIN]
   },
-  { 
-    to: routes.ALL_TRIPS_ROUTE, 
-    text: 'All Trips', 
-    forUsers: [ORGANIZER] 
+  {
+    to: routes.ALL_TRIPS_ROUTE,
+    text: 'All Trips',
+    forUsers: [ORGANIZER]
   },
   {
     to: routes.ADD_APARTMENT,
     text: 'Add Apartment',
-    forUsers: [ADMIN, ORGANIZER]
+    forUsers: [ADMIN]
+  },
+  {
+    to: routes.CREATE_USER_ROUTE,
+    text: 'Create User',
+    forUsers: [ADMIN]
   }
 ];
 
@@ -45,7 +50,12 @@ const menuItems = [
 const MenuBar = ({ active, classes, userType }) => {
   const makeButton = (text, to, isActive) => (
     <Link className={classes.navLink} key={to} to={to}>
-      <Button classes={{root: isActive && classes.buttonPadding}} variant={isActive ? 'outlined' : 'text'}>{text}</Button>
+      <Button
+        classes={{ root: isActive && classes.buttonPadding }}
+        variant={isActive ? 'outlined' : 'text'}
+      >
+        {text}
+      </Button>
     </Link>
   );
 

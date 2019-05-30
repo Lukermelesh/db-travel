@@ -4,6 +4,7 @@ import { TripsView } from '../trips-view';
 import * as routes from '../../constants/routes';
 import { View } from '../view';
 import TripForm from '../trip-form/trip-form';
+import CreateUserForm from '../create-user-form/create-user-form';
 import { ApartmentForm } from '../apartment-form';
 
 const Routes = () => (
@@ -40,7 +41,16 @@ const Routes = () => (
       exact
       render={props => (
         <View active={routes.ADD_APARTMENT}>
-          <ApartmentForm isNew {...props} />
+          <ApartmentForm {...props} />
+        </View>
+      )}
+    />
+    <Route
+      path={routes.CREATE_USER_ROUTE}
+      exact
+      render={props => (
+        <View active={routes.CREATE_USER_ROUTE}>
+          <CreateUserForm {...props} />
         </View>
       )}
     />

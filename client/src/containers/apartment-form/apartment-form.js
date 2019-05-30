@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography/Typography';
 import Grid from '@material-ui/core/Grid/Grid';
@@ -6,23 +6,9 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper/Paper';
 import Button from '@material-ui/core/Button/Button';
 import { connect } from 'react-redux';
-import { createTrip } from '../../actions/create-trip';
-import { fetchUserList } from '../../actions/fetch-user-list';
-import Select from 'react-select';
-import { InlineDatePicker } from 'material-ui-pickers';
-import { fetchLocationList } from '../../actions/fetch-location-list';
 import List from '@material-ui/core/List/List';
-import ListItem from '@material-ui/core/ListItem/ListItem';
-import Collapse from '@material-ui/core/Collapse/Collapse';
-import ListItemText from '@material-ui/core/ListItemText/ListItemText';
-import { Divider } from '@material-ui/core';
-import Links from '../../components/links/links';
 import IconButton from '@material-ui/core/IconButton/IconButton';
-import RemoveCircle from '@material-ui/icons/RemoveCircle';
-import { UploadButton } from '../../components/upload-button';
-import { ExpandMoreButton } from '../../components/expand-more-button';
-import { uniqBy, flow } from 'lodash';
-import { fetchApartmentList } from '../../actions/fetch-apartment-list';
+import { flow } from 'lodash';
 import TextField from '@material-ui/core/TextField';
 import { createApartment } from '../../actions/create-apartment';
 import DeleteForever from '@material-ui/icons/DeleteForever';
@@ -56,37 +42,19 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 3,
     marginLeft: theme.spacing.unit
   },
-  nested: {
-    padding: 10,
+  centerItem: {
     display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    backgroundColor: 'lavender'
+    alignItems: 'center'
   },
-  divider: {
-    marginBottom: theme.spacing.unit * 2,
-    marginTop: theme.spacing.unit * 2
-  },
-  nestedHeader: {
+  container: {
     width: '100%',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center'
-  },
-  fullWidth: {
-    width: '100%'
-  },
-  centerItem: {
-    display: 'flex',
-    alignItems: 'center'
   }
 });
 
-const ApartmentForm = ({
-  classes,
-  createApartment,
-  history
-}) => {
+const ApartmentForm = ({ classes, createApartment, history }) => {
   const [apartmentTitle, setApartmentTitle] = useState();
   const [apartmentAddress, setApartmentAddress] = useState();
   const [roomNumber, setRoomNumber] = useState();
@@ -94,26 +62,26 @@ const ApartmentForm = ({
 
   const handleCreateApartment = () => createApartment();
   const handleCancel = () => history.goBack();
-  const handleAddRoom = () =>
-    setApartmentRoomNumber([...roomsNumbers, roomNumber]);
+  const handleAddRoom = () => {
+    if (!roomsNumbers.includes(roomNumber))
+      setApartmentRoomNumber([...roomsNumbers, roomNumber]);
+  };
+  const handleRemoveRoom = room => () =>
+    setApartmentRoomNumber(roomsNumbers.filter(r => r !== room));
 
   const renderRooms = () => (
     <List>
-      {roomsNumbers.map(
-        (roomId, index) => (
-          <Fragment key={index}>
-      <div className={classes.container}>
-          <Typography>{roomNumber}</Typography>
-        {(
-          <IconButton>
-            <DeleteForever />
-          </IconButton>
-        )}
-      </div>
-      <br />
-    </Fragment>
-        )
-      )}
+      {roomsNumbers.map((roomId, index) => (
+        <Fragment key={index}>
+          <div className={classes.container}>
+            <Typography>{roomId}</Typography>
+            <IconButton onClick={handleRemoveRoom(roomId)}>
+              <DeleteForever />
+            </IconButton>
+          </div>
+          <br />
+        </Fragment>
+      ))}
     </List>
   );
 
@@ -126,54 +94,49 @@ const ApartmentForm = ({
               <Typography variant="h6" gutterBottom>
                 General Info
               </Typography>
-            </Grid>   
+            </Grid>
             <Grid item xs={12} sm={12}>
-              <TextField 
+              <TextField
                 margin="none"
                 label="Title"
-                className={classes.textField}
                 fullWidth
-                onChange={(event) => setApartmentTitle(event.target.value)}          
+                onChange={event => setApartmentTitle(event.target.value)}
                 variant="outlined"
               />
-              </Grid>
-              <Grid item xs={12} sm={12}>             
+            </Grid>
+            <Grid item xs={12} sm={12}>
               <TextField
                 label="Address"
-                className={classes.textField}
                 fullWidth
-                onChange={(event) => setApartmentAddress(event.target.value)}
+                onChange={event => setApartmentAddress(event.target.value)}
                 margin="none"
                 variant="outlined"
               />
             </Grid>
-              <Grid item xs={12} sm={10}>
-                <TextField
-                  label="Room Number"
-                  className={classes.textField}
-                  fullWidth
-                  //value={values.name}
-                  onChange={(event) => setRoomNumber(event.target.value)}
-                  margin="none"
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item xs={2} className={classes.centerItem}>
-                <Button 
-                  variant="contained"
-                  color="primary"
-                  onClick={handleAddRoom}
-                >
-                  Add
-                </Button>
-              </Grid>
-              <Grid item xs={12}>
+            <Grid item xs={12} sm={10}>
+              <TextField
+                label="Room Number"
+                fullWidth
+                onChange={event => setRoomNumber(event.target.value)}
+                margin="none"
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={2} className={classes.centerItem}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAddRoom}
+              >
+                Add
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
               {renderRooms()}
-            </Grid>           
-          </Grid>       
+            </Grid>
+          </Grid>
           <div className={classes.buttons}>
-            <Button className={classes.button} 
-              onClick={handleCancel}>
+            <Button className={classes.button} onClick={handleCancel}>
               Cancel
             </Button>
             <Button
