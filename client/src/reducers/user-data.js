@@ -1,5 +1,3 @@
-import { LOGIN_USER_SUCCESS } from '../actions/login-user';
-
 export default (state = {}, action) => {
   switch (action.type) {
     case LOGIN_USER_SUCCESS:
