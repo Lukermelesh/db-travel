@@ -18,7 +18,7 @@ export const loginUser = (email, password) => {
         password
       });
 
-      requestConfig.token = result.data;
+      requestConfig.token = result.data.token;
       dispatch(loginUserSuccess(result.data));
     } catch {
       dispatch(loginUserFailure());
