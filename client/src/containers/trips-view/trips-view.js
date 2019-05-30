@@ -71,7 +71,7 @@ TripsView.propTypes = {
   trips: PropTypes.array.isRequired,
   userId: PropTypes.string.isRequired,
   allTrips: PropTypes.bool,
-  userType: PropTypes.string.isRequired
+  userType: PropTypes.number.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
