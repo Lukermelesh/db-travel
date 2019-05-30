@@ -1,4 +1,9 @@
+const productionUrl = 'https://travel-devbridge.azurewebsites.net/api';
+const localUrl = 'http://localhost:3001';
+
 export const apiBaseUrl =
   process.env.NODE_ENV === 'production'
-    ? 'https://travel-devbridge.azurewebsites.net/api'
-    : 'http://localhost:3001';
+    ? productionUrl
+    : process.env.REACT_APP_SERVER === 'production'
+    ? productionUrl
+    : localUrl;
