@@ -29,7 +29,16 @@ const menuItems = [
     text: 'My Trips',
     forUsers: [REGULAR, ORGANIZER, ADMIN]
   },
-  { to: routes.ALL_TRIPS_ROUTE, text: 'All Trips', forUsers: [ORGANIZER] }
+  { 
+    to: routes.ALL_TRIPS_ROUTE, 
+    text: 'All Trips', 
+    forUsers: [ORGANIZER] 
+  },
+  {
+    to: routes.ADD_APARTMENT,
+    text: 'Add Apartment',
+    forUsers: [ADMIN, ORGANIZER]
+  }
 ];
 
 //TODO: make different navigation for mobile (with hamburger icon)
