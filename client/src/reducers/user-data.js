@@ -1,7 +1,9 @@
+import { LOGIN_USER_SUCCESS } from '../actions/login-user';
+
 export default (state = {}, action) => {
   switch (action.type) {
     case LOGIN_USER_SUCCESS:
-      const {token, userType} = action.payload;
+      const { token, userType } = action.payload;
       return {
         ...state,
         token,
