@@ -3,11 +3,14 @@ import { apiBaseUrl } from '../constants/env';
 
 export const requestConfig = {};
 
-export const get = path => axios.get(`${apiBaseUrl}${path}`);
+const getHeader = () => ({
+  headers: { Authorization: `BEARER ${requestConfig.token}` }
+});
+export const get = path => axios.get(`${apiBaseUrl}${path}`, getHeader());
 export const post = (path, options) => {
   options = {
     ...options,
     ...(requestConfig.token && { token: requestConfig.token })
   };
-  return axios.post(`${apiBaseUrl}${path}`, options);
+  return axios.post(`${apiBaseUrl}${path}`, options, getHeader());
 };
