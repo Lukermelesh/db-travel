@@ -6,4 +6,4 @@ export const apiBaseUrl =
     ? productionUrl
     : process.env.REACT_APP_SERVER === 'production'
     ? productionUrl
-    : localUrl;
+    : productionUrl;

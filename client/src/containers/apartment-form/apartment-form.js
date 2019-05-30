@@ -25,6 +25,7 @@ import { uniqBy, flow } from 'lodash';
 import { fetchApartmentList } from '../../actions/fetch-apartment-list';
 import TextField from '@material-ui/core/TextField';
 import { createApartment } from '../../actions/create-apartment';
+import DeleteForever from '@material-ui/icons/DeleteForever';
 
 const styles = theme => ({
   layout: {
@@ -88,10 +89,33 @@ const ApartmentForm = ({
 }) => {
   const [apartmentTitle, setApartmentTitle] = useState();
   const [apartmentAddress, setApartmentAddress] = useState();
-  const [RoomsNumbers, setApartmentRoomNumber] = useState([]);
+  const [roomNumber, setRoomNumber] = useState();
+  const [roomsNumbers, setApartmentRoomNumber] = useState([]);
 
   const handleCreateApartment = () => createApartment();
   const handleCancel = () => history.goBack();
+  const handleAddRoom = () =>
+    setApartmentRoomNumber([...roomsNumbers, roomNumber]);
+
+  const renderRooms = () => (
+    <List>
+      {roomsNumbers.map(
+        (roomId, index) => (
+          <Fragment key={index}>
+      <div className={classes.container}>
+          <Typography>{roomNumber}</Typography>
+        {(
+          <IconButton>
+            <DeleteForever />
+          </IconButton>
+        )}
+      </div>
+      <br />
+    </Fragment>
+        )
+      )}
+    </List>
+  );
 
   return (
     <main className={classes.layout}>
@@ -129,7 +153,7 @@ const ApartmentForm = ({
                   className={classes.textField}
                   fullWidth
                   //value={values.name}
-                  onChange={(event) => setApartmentRoomNumber(event.target.value)}
+                  onChange={(event) => setRoomNumber(event.target.value)}
                   margin="none"
                   variant="outlined"
                 />
@@ -138,11 +162,14 @@ const ApartmentForm = ({
                 <Button 
                   variant="contained"
                   color="primary"
-                  //onClick={handleAddRoom}
+                  onClick={handleAddRoom}
                 >
                   Add
                 </Button>
-              </Grid>           
+              </Grid>
+              <Grid item xs={12}>
+              {renderRooms()}
+            </Grid>           
           </Grid>       
           <div className={classes.buttons}>
             <Button className={classes.button} 
