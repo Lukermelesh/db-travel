@@ -23,7 +23,7 @@ const View = ({ active, isLoggedIn, children }) => {
 };
 
 View.propTypes = {
-  isLoggedIn: PropTypes.bool.isRequired
+  isLoggedIn: PropTypes.bool
 };
 
 const mapStateToProps = state => ({

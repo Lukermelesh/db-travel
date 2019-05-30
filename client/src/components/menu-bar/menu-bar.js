@@ -65,7 +65,7 @@ const MenuBar = ({ active, classes, userType }) => {
 
 MenuBar.propTypes = {
   active: PropTypes.string.isRequired,
-  userType: PropTypes.string.isRequired
+  userType: PropTypes.number.isRequired
 };
 
 const mapStateToProps = state => ({
