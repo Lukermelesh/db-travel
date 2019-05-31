@@ -18,7 +18,7 @@ const FormView = ({ match, Form }) => (
 );
 
 FormView.propTypes = {
-  Form: PropTypes.element
+  Form: PropTypes.object
 };
 
 export default FormView;

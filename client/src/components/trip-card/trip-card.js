@@ -14,6 +14,8 @@ import {
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import Edit from '@material-ui/icons/Edit';
+import FlightIcon from '@material-ui/icons/Flight';
+import HotelIcon from '@material-ui/icons/Hotel';
 import classnames from 'classnames';
 import * as tripStatus from '../../constants/trip-status';
 import { timestampToDate } from '../../helpers/date-helpers';
@@ -39,7 +41,14 @@ const styles = theme => ({
   divider: {
     marginBottom: theme.spacing.unit * 2,
     marginTop: theme.spacing.unit * 2
-  }
+  },
+  iconColorPrimary: {
+    color: 'limegreen'
+  },
+  icons: {
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
 });
 
 const TripCard = ({
@@ -90,11 +99,27 @@ const TripCard = ({
   const isPending = trip.details[0].status === tripStatus.PENDING;
 
   const renderTravellers = () =>
-    trip.travellers.map(traveller => (
-      <Typography key={traveller.id} component="p">
-        {traveller.name}
-      </Typography>
-    ));
+    trip.travellers.map(traveller => {
+      const { tickets, accommodation } = traveller;
+      const iconColorOverride = { colorPrimary: classes.iconColorPrimary };
+      return (
+        <div key={traveller.id} className={classes.flex}>
+          <Typography component="p">{traveller.name}</Typography>
+          <div className={classes.icons}>
+            <FlightIcon
+              classes={iconColorOverride}
+              color={tickets && tickets.length ? 'primary' : 'error'}
+            />
+            <HotelIcon
+              classes={iconColorOverride}
+              color={
+                accommodation && accommodation.fileUrl ? 'primary' : 'error'
+              }
+            />
+          </div>
+        </div>
+      );
+    });
 
   const getTripStatus = () => (isSingleTraveller ? trip.details[0].status : '');
 
