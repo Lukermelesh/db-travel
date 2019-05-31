@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions';
-import { getUserId } from '../selectors/user-data';
 import { post } from '../helpers/request-helpers';
 
 export const CREATE_TRIP_REQUEST = 'createApartment/FETCH_REQUEST';
@@ -11,7 +10,7 @@ export const createTripSuccess = createAction(CREATE_TRIP_SUCCESS);
 export const createTripFailure = createAction(CREATE_TRIP_FAILURE);
 
 export const createApartment = apartmentData => {
-  return async (dispatch, getState) => {
+  return async dispatch => {
     dispatch(createTripRequest());
     try {
       await post(`/apartment`, apartmentData);

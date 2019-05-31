@@ -55,23 +55,24 @@ const styles = theme => ({
 });
 
 const ApartmentForm = ({ classes, createApartment, history }) => {
-  const [apartmentTitle, setApartmentTitle] = useState();
-  const [apartmentAddress, setApartmentAddress] = useState();
+  const [title, setTitle] = useState();
+  const [address, setAddress] = useState();
   const [roomNumber, setRoomNumber] = useState();
-  const [roomsNumbers, setApartmentRoomNumber] = useState([]);
+  const [roomNumberList, setRoomNumberList] = useState([]);
 
-  const handleCreateApartment = () => createApartment();
+  const handleCreateApartment = () =>
+    createApartment({ title, address, rooms: roomNumberList });
   const handleCancel = () => history.goBack();
   const handleAddRoom = () => {
-    if (!roomsNumbers.includes(roomNumber))
-      setApartmentRoomNumber([...roomsNumbers, roomNumber]);
+    if (!roomNumberList.includes(roomNumber))
+      setRoomNumberList([...roomNumberList, roomNumber]);
   };
   const handleRemoveRoom = room => () =>
-    setApartmentRoomNumber(roomsNumbers.filter(r => r !== room));
+    setRoomNumberList(roomNumberList.filter(r => r !== room));
 
   const renderRooms = () => (
     <List>
-      {roomsNumbers.map((roomId, index) => (
+      {roomNumberList.map((roomId, index) => (
         <Fragment key={index}>
           <div className={classes.container}>
             <Typography>{roomId}</Typography>
@@ -100,7 +101,7 @@ const ApartmentForm = ({ classes, createApartment, history }) => {
                 margin="none"
                 label="Title"
                 fullWidth
-                onChange={event => setApartmentTitle(event.target.value)}
+                onChange={event => setTitle(event.target.value)}
                 variant="outlined"
               />
             </Grid>
@@ -108,7 +109,7 @@ const ApartmentForm = ({ classes, createApartment, history }) => {
               <TextField
                 label="Address"
                 fullWidth
-                onChange={event => setApartmentAddress(event.target.value)}
+                onChange={event => setAddress(event.target.value)}
                 margin="none"
                 variant="outlined"
               />

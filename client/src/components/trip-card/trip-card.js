@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from 'react';
+import { flow } from 'lodash';
 import PropTypes from 'prop-types';
 import {
   Card,
@@ -9,8 +10,7 @@ import {
   IconButton,
   Typography,
   Button,
-  Divider,
-  Link
+  Divider
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import Edit from '@material-ui/icons/Edit';
@@ -223,8 +223,10 @@ const mapDispatchToProps = {
   rejectTrip
 };
 
-//TODO: maybe use _.flow for better readability
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(TripCard));
+export default flow(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  ),
+  withStyles(styles)
+)(TripCard);
