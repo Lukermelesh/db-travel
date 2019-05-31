@@ -4,3 +4,4 @@ export const NEW_TRIP_ROUTE = '/all-trips/new';
 export const CREATE_USER_ROUTE = '/user/create';
 export const ADD_APARTMENT_ROUTE = '/add-apartment';
 export const SIGNUP_ROUTE = '/signup/:token';
+export const EDIT_TRIP_ROUTE = '/all-trips/edit';

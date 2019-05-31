@@ -26,6 +26,8 @@ import { getUserType } from '../../selectors/user-data';
 import { ADMIN, ORGANIZER } from '../../constants/user-types';
 import { ExpandMoreButton } from '../expand-more-button';
 import Links from '../links/links';
+import { EDIT_TRIP_ROUTE } from '../../constants/routes';
+import { Link } from 'react-router-dom';
 
 const styles = theme => ({
   primaryCta: {
@@ -48,7 +50,7 @@ const styles = theme => ({
   icons: {
     display: 'flex',
     justifyContent: 'flex-end'
-  },
+  }
 });
 
 const TripCard = ({
@@ -79,7 +81,6 @@ const TripCard = ({
 
   const handleApproveClick = () => approveTrip(trip.id);
   const handleDeclineClick = () => rejectTrip(trip.id);
-  const handleEdit = () => alert('edit');
 
   const getCardTitle = () => {
     switch (getTripStatus()) {
@@ -177,13 +178,14 @@ const TripCard = ({
         )}
         <div>
           {isPrivilegedUser && (
-            <IconButton
-              classes={{ root: classes.iconButton }}
-              onClick={handleEdit}
-              aria-label="Edit"
-            >
-              <Edit />
-            </IconButton>
+            <Link to={`${EDIT_TRIP_ROUTE}/${trip.id}`} component="p">
+              <IconButton
+                classes={{ root: classes.iconButton }}
+                aria-label="Edit"
+              >
+                <Edit />
+              </IconButton>
+            </Link>
           )}
           <ExpandMoreButton isOpen={expanded} onClick={handleExpandClick} />
         </div>

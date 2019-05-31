@@ -23,6 +23,9 @@ import { UploadButton } from '../../components/upload-button';
 import { ExpandMoreButton } from '../../components/expand-more-button';
 import { uniqBy, flow } from 'lodash';
 import { fetchApartmentList } from '../../actions/fetch-apartment-list';
+import { getTripById } from '../../selectors/trips';
+import { fetchUserTrips } from '../../actions/fetch-user-trips';
+import { getUserId } from '../../selectors/user-data';
 
 const styles = theme => ({
   layout: {
@@ -81,7 +84,10 @@ const TripForm = ({
   fetchUserList,
   fetchLocationList,
   fetchApartmentList,
-  history
+  history,
+  match: { params },
+  getTripById,
+  userId
 }) => {
   const [userSuggestions, setUserSuggestions] = useState([]);
   const [apartmentsSuggestions, setApartmentsSuggestions] = useState([]);
@@ -103,16 +109,31 @@ const TripForm = ({
         );
     };
 
+    const transformLocationToSelection = location => ({
+      label: location.name,
+      value: location.id
+    });
+
     const fetchLocationSuggestions = async () => {
       const locationList = await fetchLocationList();
       locationList &&
-        setLocationSuggestions(
-          locationList.map(location => ({
-            label: location.name,
-            value: location.id
-          }))
-        );
+        setLocationSuggestions(locationList.map(transformLocationToSelection));
     };
+
+    const populateTripData = async () => {
+      const trip = getTripById(params.tripId);
+      if (!trip) {
+        await fetchUserTrips(userId);
+      }
+      handleDepartureDateChange(new Date(trip.from));
+      handleReturnDateChange(new Date(trip.to));
+      // setOrigin(transformLocationToSelection(trip.origin));
+      // setDestination(transformLocationToSelection(trip.destination));
+    };
+
+    if (params.tripId) {
+      populateTripData();
+    }
 
     fetchUserSuggestions();
     fetchLocationSuggestions();
@@ -362,8 +383,14 @@ TripForm.propTypes = {
   createTrip: PropTypes.func.isRequired,
   fetchUserList: PropTypes.func.isRequired,
   fetchLocationList: PropTypes.func.isRequired,
-  fetchApartmentList: PropTypes.func.isRequired
+  fetchApartmentList: PropTypes.func.isRequired,
+  getTripById: PropTypes.func.isRequired
 };
+
+const mapStateToProps = state => ({
+  getTripById: id => getTripById(state, id),
+  userId: getUserId(state)
+});
 
 const mapDispatchToProps = {
   createTrip,
@@ -374,7 +401,7 @@ const mapDispatchToProps = {
 
 export default flow(
   connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
   ),
   withStyles(styles)

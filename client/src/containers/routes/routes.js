@@ -65,6 +65,14 @@ const Routes = () => (
         </View>
       )}
     />
+    <Route
+      path={`${routes.EDIT_TRIP_ROUTE}/:tripId`}
+      render={props => (
+        <View active={routes.ALL_TRIPS_ROUTE}>
+          <TripForm {...props} />
+        </View>
+      )}
+    />
   </Router>
 );
 
