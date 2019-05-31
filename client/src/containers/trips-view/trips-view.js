@@ -12,7 +12,7 @@ import { getUserId, getUserType } from '../../selectors/user-data';
 import { getOwnTrips } from '../../selectors/trips';
 import { fetchAllTrips } from '../../actions/fetch-all-trips';
 import { NEW_TRIP_ROUTE } from '../../constants/routes';
-import { ORGANIZER } from '../../constants/user-types';
+import { ADMIN, ORGANIZER } from '../../constants/user-types';
 
 const styles = theme => ({
   layout: {
@@ -53,7 +53,7 @@ const TripsView = ({
             <TripCard trip={trip} />
           </Grid>
         ))}
-        {userType === ORGANIZER && (
+        {(userType === ORGANIZER || userType === ADMIN) && (
           <Link to={NEW_TRIP_ROUTE}>
             <Fab className={classes.fab} color="primary" aria-label="Add">
               <AddIcon />
