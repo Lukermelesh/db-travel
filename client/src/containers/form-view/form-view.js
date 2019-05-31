@@ -1,8 +1,8 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid/Grid';
-import LoginForm from '../../components/login-form/login-form';
+import PropTypes from 'prop-types';
 
-const LoginView = () => (
+const FormView = ({ match, Form }) => (
   <Grid
     container
     spacing={0}
@@ -12,9 +12,13 @@ const LoginView = () => (
     style={{ minHeight: '100vh' }}
   >
     <Grid item xs={3}>
-      <LoginForm />
+      <Form match={match} />
     </Grid>
   </Grid>
 );
 
-export default LoginView;
+FormView.propTypes = {
+  Form: PropTypes.element
+};
+
+export default FormView;

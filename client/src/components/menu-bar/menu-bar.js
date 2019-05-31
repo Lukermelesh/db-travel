@@ -35,7 +35,7 @@ const menuItems = [
     forUsers: [ORGANIZER]
   },
   {
-    to: routes.ADD_APARTMENT,
+    to: routes.ADD_APARTMENT_ROUTE,
     text: 'Add Apartment',
     forUsers: [ADMIN]
   },
@@ -74,7 +74,7 @@ const MenuBar = ({ active, classes, userType }) => {
 };
 
 MenuBar.propTypes = {
-  active: PropTypes.string.isRequired,
+  active: PropTypes.string,
   userType: PropTypes.number.isRequired
 };
 

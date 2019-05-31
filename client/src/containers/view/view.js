@@ -4,9 +4,10 @@ import Grid from '@material-ui/core/Grid/Grid';
 import PropTypes from 'prop-types';
 import { isLoggedIn } from '../../selectors/user-data';
 import connect from 'react-redux/es/connect/connect';
-import { LoginView } from '../login-view';
+import FormView from '../form-view/form-view';
+import { LoginForm } from '../../components/login-form';
 
-const View = ({ active, isLoggedIn, children }) => {
+const View = ({ active, isLoggedIn, children, hideLogin }) => {
   const renderedView = (
     <Fragment>
       <Grid container>
@@ -17,13 +18,19 @@ const View = ({ active, isLoggedIn, children }) => {
       {children}
     </Fragment>
   );
-  const loginView = <LoginView />;
+  const loginView = <FormView Form={LoginForm} />;
 
-  return isLoggedIn ? renderedView : loginView;
+  if (hideLogin) {
+    return renderedView;
+  } else {
+    return isLoggedIn ? renderedView : loginView;
+  }
 };
 
 View.propTypes = {
-  isLoggedIn: PropTypes.bool
+  hideLogin: PropTypes.bool,
+  isLoggedIn: PropTypes.bool,
+  active: PropTypes.string
 };
 
 const mapStateToProps = state => ({

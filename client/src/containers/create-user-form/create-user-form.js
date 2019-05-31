@@ -46,6 +46,7 @@ const styles = theme => ({
 
 const CreateUserForm = ({ classes, createUser, history }) => {
   const [email, setEmail] = useState();
+  const handleOnEmailChange = event => setEmail(event.target.value);
   const handleCancel = () => history.goBack();
   const handleCreateUser = () => createUser(email);
 
@@ -62,7 +63,7 @@ const CreateUserForm = ({ classes, createUser, history }) => {
             <Grid item xs={12} sm={12}>
               <TextField
                 className={classes.fullWidth}
-                onChange={setEmail}
+                onChange={handleOnEmailChange}
                 placeholder="Email"
                 margin="none"
               />

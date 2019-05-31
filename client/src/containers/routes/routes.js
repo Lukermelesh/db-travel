@@ -6,6 +6,8 @@ import { View } from '../view';
 import TripForm from '../trip-form/trip-form';
 import CreateUserForm from '../create-user-form/create-user-form';
 import { ApartmentForm } from '../apartment-form';
+import FormView from '../form-view/form-view';
+import { SignupForm } from '../../components/signup-form';
 
 const Routes = () => (
   <Router>
@@ -37,10 +39,10 @@ const Routes = () => (
       )}
     />
     <Route
-      path={routes.ADD_APARTMENT}
+      path={routes.ADD_APARTMENT_ROUTE}
       exact
       render={props => (
-        <View active={routes.ADD_APARTMENT}>
+        <View active={routes.ADD_APARTMENT_ROUTE}>
           <ApartmentForm {...props} />
         </View>
       )}
@@ -51,6 +53,15 @@ const Routes = () => (
       render={props => (
         <View active={routes.CREATE_USER_ROUTE}>
           <CreateUserForm {...props} />
+        </View>
+      )}
+    />
+    <Route
+      path={routes.SIGNUP_ROUTE}
+      exact
+      render={props => (
+        <View hideLogin>
+          <FormView Form={SignupForm} {...props} />
         </View>
       )}
     />
