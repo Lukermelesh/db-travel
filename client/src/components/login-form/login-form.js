@@ -5,6 +5,7 @@ import Button from '@material-ui/core/Button/Button';
 import { withStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { loginUser } from '../../actions/login-user';
+import Grid from '@material-ui/core/Grid/Grid';
 
 const styles = theme => ({
   form: {
@@ -27,39 +28,47 @@ const LoginForm = ({ classes, loginUser }) => {
 
   return (
     <form className={classes.form} noValidate>
-      <TextField
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        id="email"
-        label="Email Address"
-        name="email"
-        autoComplete="email"
-        autoFocus
-        onChange={updateEmail}
-      />
-      <TextField
-        variant="outlined"
-        margin="normal"
-        required
-        fullWidth
-        name="password"
-        label="Password"
-        type="password"
-        id="password"
-        autoComplete="current-password"
-        onChange={updatePassword}
-      />
-      <Button
-        onClick={handleLoginClick}
-        fullWidth
-        variant="contained"
-        color="primary"
-        className={classes.submit}
-      >
-        Sign In
-      </Button>
+    <Grid container spacing={24}>
+        <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            onChange={updateEmail}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            onChange={updatePassword}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Button
+            onClick={handleLoginClick}
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Sign In
+          </Button>
+        </Grid>
+      </Grid>
     </form>
   );
 };
