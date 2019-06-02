@@ -24,6 +24,7 @@ import { ExpandMoreButton } from '../../components/expand-more-button';
 import { uniqBy, flow } from 'lodash';
 import { fetchApartmentList } from '../../actions/fetch-apartment-list';
 import { fetchUserTrips } from '../../actions/fetch-user-trips';
+import { jsToUnixTime } from '../../helpers/date-helpers';
 
 const getTripById = (trips, id) => trips.find(trip => trip.id === id);
 
@@ -85,7 +86,7 @@ const TripForm = ({
   fetchLocationList,
   fetchApartmentList,
   history,
-  match: { params },
+  match: { params }
 }) => {
   const [userSuggestions, setUserSuggestions] = useState([]);
   const [apartmentsSuggestions, setApartmentsSuggestions] = useState([]);
@@ -153,14 +154,12 @@ const TripForm = ({
     }
   }, [destination]);
 
-  const getFormattedTime = date => Math.floor(date.getTime() / 1000);
-
   const handleCreateTrip = () => {
     const tripData = {
       origin: origin.label,
       destination: destination.label,
-      from: getFormattedTime(departureDate),
-      to: getFormattedTime(returnDate)
+      from: jsToUnixTime(departureDate),
+      to: jsToUnixTime(returnDate)
     };
     const travellerDetails = {};
     createTrip(tripData, travellerDetails);
@@ -382,7 +381,7 @@ TripForm.propTypes = {
   createTrip: PropTypes.func.isRequired,
   fetchUserList: PropTypes.func.isRequired,
   fetchLocationList: PropTypes.func.isRequired,
-  fetchApartmentList: PropTypes.func.isRequired,
+  fetchApartmentList: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = {

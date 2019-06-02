@@ -3,6 +3,7 @@ import { FETCH_USER_TRIPS_SUCCESS } from '../actions/fetch-user-trips';
 import { APPROVED, REJECTED } from '../constants/trip-status';
 import { REJECT_TRIP_SUCCESS } from '../actions/reject-trip';
 import { FETCH_ALL_TRIPS_SUCCESS } from '../actions/fetch-all-trips';
+import { unixToJsTime } from '../helpers/date-helpers';
 
 const updateTripStatus = (state, { tripId, userId }, status) => {
   return state.map(trip =>
@@ -26,9 +27,23 @@ export default (state = { ownTrips: [], all: [] }, action) => {
     case REJECT_TRIP_SUCCESS:
       return updateTripStatus(state, action.payload.tripId, REJECTED);
     case FETCH_USER_TRIPS_SUCCESS:
-      return { ...state, ownTrips: action.payload };
+      return {
+        ...state,
+        ownTrips: action.payload.map(trip => ({
+          ...trip,
+          from: unixToJsTime(trip.from),
+          to: unixToJsTime(trip.to)
+        }))
+      };
     case FETCH_ALL_TRIPS_SUCCESS:
-      return { ...state, all: action.payload };
+      return {
+        ...state,
+        all: action.payload.map(trip => ({
+          ...trip,
+          from: unixToJsTime(trip.from),
+          to: unixToJsTime(trip.to)
+        }))
+      };
     default:
       return state;
   }
