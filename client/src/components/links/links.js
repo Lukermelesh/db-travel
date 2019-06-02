@@ -20,7 +20,7 @@ const Links = ({ links, allowDelete, onDeleteClick, classes }) => {
   return links.map((link, index) => (
     <Fragment key={index}>
       <div className={classes.container}>
-        <a href={link.url} target="_blank" download>
+        <a href={link.url} target="_blank" rel="noopener noreferrer" download>
           <Link component="p">{link.title}</Link>
         </a>
         {allowDelete && (

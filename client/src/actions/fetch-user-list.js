@@ -14,7 +14,7 @@ export const fetchUserList = () => {
     dispatch(fetchUserListRequest());
     try {
       //TODO:[server] Do not suggest users if they are busy during the time of travel
-      const users = await get(`/users`);
+      const users = await get(`/user`);
       dispatch(fetchUserListSuccess(users.data));
       return users.data;
     } catch {

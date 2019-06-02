@@ -15,11 +15,11 @@ export const fetchApartmentListFailure = createAction(
   FETCH_APARTMENT_LIST_FAILURE
 );
 
-export const fetchApartmentList = locationId => {
+export const fetchApartmentList = () => {
   return async dispatch => {
     dispatch(fetchApartmentListRequest());
     try {
-      const apartments = await get(`/apartments/${locationId}`);
+      const apartments = await get(`/location`);
       dispatch(fetchApartmentListSuccess(apartments.data));
       return apartments.data;
     } catch {

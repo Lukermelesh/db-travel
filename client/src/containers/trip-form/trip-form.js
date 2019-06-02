@@ -23,7 +23,6 @@ import { UploadButton } from '../../components/upload-button';
 import { ExpandMoreButton } from '../../components/expand-more-button';
 import { uniqBy, flow } from 'lodash';
 import { fetchApartmentList } from '../../actions/fetch-apartment-list';
-import { fetchUserTrips } from '../../actions/fetch-user-trips';
 import { jsToUnixTime } from '../../helpers/date-helpers';
 import { uploadFile } from '../../helpers/azure-helpers';
 
@@ -103,7 +102,7 @@ const TripForm = ({
       const userList = await fetchUserList();
       userList &&
         setUserSuggestions(
-          userList.map(user => ({ label: user.name, value: user.id }))
+          userList.map(user => ({ label: user.email, value: user.id }))
         );
     };
 
@@ -137,7 +136,7 @@ const TripForm = ({
 
   useEffect(() => {
     const fetchApartmentsSuggestions = async () => {
-      const apartmentList = await fetchApartmentList(destination.value);
+      const apartmentList = await fetchApartmentList();
       apartmentList &&
         setApartmentsSuggestions(
           apartmentList.map(apt => ({ label: apt.name, value: apt.id }))
@@ -295,7 +294,7 @@ const TripForm = ({
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
-              F
+              <Select
                 value={origin}
                 onChange={setOrigin}
                 options={locationSuggestions}

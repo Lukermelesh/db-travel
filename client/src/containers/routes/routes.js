@@ -72,7 +72,7 @@ const Routes = ({ getTripById }) => (
       path={`${routes.EDIT_TRIP_ROUTE}/:tripId`}
       render={({ match: { params }, ...rest }) => (
         <View active={routes.ALL_TRIPS_ROUTE}>
-          <TripForm trip={getTripById(params.tripId)} {...rest} />
+          <TripForm trip={getTripById(parseInt(params.tripId, 10))} {...rest} />
         </View>
       )}
     />
