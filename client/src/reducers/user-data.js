@@ -1,7 +1,16 @@
 import { LOGIN_USER_SUCCESS } from '../actions/login-user';
 import { LOGOUT_USER_SUCCESS } from '../actions/logout-user';
+import { parseCookie } from '../helpers/cookie-helpers';
 
-export default (state = {}, action) => {
+const getDefaultState = () => {
+  const cookie = parseCookie();
+  return {
+    isLoggedIn: !!cookie.token,
+    userType: cookie.type
+  };
+};
+
+export default (state = getDefaultState(), action) => {
   switch (action.type) {
     case LOGOUT_USER_SUCCESS:
       return {

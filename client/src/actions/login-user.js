@@ -18,6 +18,7 @@ export const loginUser = (email, password) => {
         password
       });
 
+      document.cookie = `session=${JSON.stringify(result.data)}`;
       requestConfig.token = result.data.token;
       dispatch(loginUserSuccess(result.data));
     } catch {

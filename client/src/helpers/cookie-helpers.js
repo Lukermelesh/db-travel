@@ -1,0 +1,1 @@
+export const parseCookie = () => document.cookie && JSON.parse(document.cookie.split('session=')[1]);
