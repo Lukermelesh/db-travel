@@ -27,6 +27,12 @@ const SignupForm = ({ classes, signupUser, match: { params } }) => {
 
   const handleSignupClick = () =>
     signupUser(passwordConfirmation, password, params.token);
+  const handleKeyPress = event => {
+    if (event.key === 'Enter') {
+      handleSignupClick();
+      event.preventDefault();
+    }
+  };
 
   return (
     <form className={classes.form} noValidate>
@@ -43,6 +49,7 @@ const SignupForm = ({ classes, signupUser, match: { params } }) => {
             id="password"
             autoComplete="current-password"
             onChange={updatePassword}
+            onKeyPress={handleKeyPress}
           />
         </Grid>
         <Grid item xs={12}>
@@ -56,6 +63,7 @@ const SignupForm = ({ classes, signupUser, match: { params } }) => {
             type="password"
             id="password-confirmation"
             onChange={updatePasswordConfirmation}
+            onKeyPress={handleKeyPress}
           />
         </Grid>
         <Grid item xs={12}>

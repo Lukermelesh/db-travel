@@ -25,10 +25,16 @@ const LoginForm = ({ classes, loginUser }) => {
   const updatePassword = event => setPassword(event.target.value);
 
   const handleLoginClick = () => loginUser(email, password);
+  const handleKeyPress = event => {
+    if (event.key === 'Enter') {
+      handleLoginClick();
+      event.preventDefault();
+    }
+  };
 
   return (
     <form className={classes.form} noValidate>
-    <Grid container spacing={24}>
+      <Grid container spacing={24}>
         <Grid item xs={12}>
           <TextField
             variant="outlined"
@@ -41,6 +47,7 @@ const LoginForm = ({ classes, loginUser }) => {
             autoComplete="email"
             autoFocus
             onChange={updateEmail}
+            onKeyPress={handleKeyPress}
           />
         </Grid>
         <Grid item xs={12}>
@@ -55,6 +62,7 @@ const LoginForm = ({ classes, loginUser }) => {
             id="password"
             autoComplete="current-password"
             onChange={updatePassword}
+            onKeyPress={handleKeyPress}
           />
         </Grid>
         <Grid item xs={12}>

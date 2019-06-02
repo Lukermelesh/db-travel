@@ -9,14 +9,14 @@ export const signupUserRequest = createAction(SIGNUP_USER_REQUEST);
 export const signupUserSuccess = createAction(SIGNUP_USER_SUCCESS);
 export const signupUserFailure = createAction(SIGNUP_USER_FAILURE);
 
-export const signupUser = (password, passwordConfirmation, token) => {
+export const signupUser = (password, repeatPassword, confirmationToken) => {
   return async dispatch => {
     dispatch(signupUserRequest());
     try {
       const result = await post('/auth/signup', {
-        passwordConfirmation,
+        repeatPassword,
         password,
-        token
+        confirmationToken
       });
 
       requestConfig.token = result.data.token;
