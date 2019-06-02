@@ -62,7 +62,7 @@ const TripCard = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
 
-  const isSingleTraveller = trip.details.length === 1;
+  const isSingleTraveller = trip.travelDetails.length === 1;
   const handleExpandClick = () => setExpanded(!expanded);
   const getHeaderColor = () => {
     switch (getTripStatus()) {
@@ -97,15 +97,16 @@ const TripCard = ({
     }
   };
 
-  const isPending = trip.details[0].status === tripStatus.PENDING;
+  const travelDetails = trip.travelDetails[0];
+  const isPending = trip.details.status === tripStatus.PENDING;
 
   const renderTravellers = () =>
-    trip.travellers.map(traveller => {
-      const { tickets, accommodation } = traveller;
+    trip.travelDetails.map(details => {
+      const { tickets, accommodation } = details;
       const iconColorOverride = { colorPrimary: classes.iconColorPrimary };
       return (
-        <div key={traveller.id} className={classes.flex}>
-          <Typography component="p">{traveller.name}</Typography>
+        <div key={details.id} className={classes.flex}>
+          <Typography component="p">{details.name}</Typography>
           <div className={classes.icons}>
             <FlightIcon
               classes={iconColorOverride}
@@ -122,9 +123,9 @@ const TripCard = ({
       );
     });
 
-  const getTripStatus = () => (isSingleTraveller ? trip.details[0].status : '');
+  const getTripStatus = () => (isSingleTraveller ? trip.details.status : '');
 
-  const acc = trip.details[0].accommodation;
+  const acc = (travelDetails && travelDetails.accommodation) || {};
   return (
     <Card>
       <CardHeader
@@ -198,13 +199,13 @@ const TripCard = ({
                 Department
               </Typography>
               <Typography component="p">
-                {trip.details[0].department}
+                {trip.travelDetails[0].department}
               </Typography>
               <Divider className={classes.divider} />
               <Typography variant="h6" component="p">
                 Tickets:
               </Typography>
-              <Links links={trip.details[0].tickets} />
+              <Links links={trip.travelDetails[0].tickets} />
               <Divider className={classes.divider} />
               <Typography variant="h6" component="p">
                 Accommodation

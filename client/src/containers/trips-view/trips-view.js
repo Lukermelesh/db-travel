@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { TripCard } from '../../components/trip-card';
 import { fetchUserTrips } from '../../actions/fetch-user-trips';
-import { getUserId, getUserType } from '../../selectors/user-data';
+import { getUserType } from '../../selectors/user-data';
 import { getOwnTrips } from '../../selectors/trips';
 import { fetchAllTrips } from '../../actions/fetch-all-trips';
 import { NEW_TRIP_ROUTE } from '../../constants/routes';
@@ -31,7 +31,6 @@ const TripsView = ({
   classes,
   fetchUserTrips,
   trips,
-  userId,
   allTrips,
   fetchAllTrips,
   userType
@@ -39,7 +38,7 @@ const TripsView = ({
   useEffect(() => {
     const fetchData = async () => {
       //TODO: maybe implement a loader while loading trips?
-      allTrips ? await fetchAllTrips() : await fetchUserTrips(userId);
+      allTrips ? await fetchAllTrips() : await fetchUserTrips();
     };
 
     fetchData();
@@ -48,11 +47,14 @@ const TripsView = ({
   return (
     <div className={classes.layout}>
       <Grid container spacing={24}>
-        {trips.map(trip => (
-          <Grid key={trip.id} item xs={12} sm={12} md={4} lg={3}>
-            <TripCard trip={trip} />
-          </Grid>
-        ))}
+        {trips.map(trip => {
+          console.log('TRIP -> ', trip);
+          return (
+            <Grid key={trip.id} item xs={12} sm={12} md={4} lg={3}>
+              <TripCard trip={trip} />
+            </Grid>
+          );
+        })}
         {(userType === ORGANIZER || userType === ADMIN) && (
           <Link to={NEW_TRIP_ROUTE}>
             <Fab className={classes.fab} color="primary" aria-label="Add">
@@ -69,16 +71,17 @@ TripsView.propTypes = {
   classes: PropTypes.object.isRequired,
   fetchUserTrips: PropTypes.func.isRequired,
   trips: PropTypes.array.isRequired,
-  userId: PropTypes.string.isRequired,
   allTrips: PropTypes.bool,
   userType: PropTypes.number.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  trips: ownProps.allTrips ? state.trips : getOwnTrips(state),
-  userId: getUserId(state),
-  userType: getUserType(state)
-});
+const mapStateToProps = (state, ownProps) => {
+  console.log('TRIPS ', state.trips);
+  return {
+    trips: ownProps.allTrips ? state.trips.all : getOwnTrips(state),
+    userType: getUserType(state)
+  };
+};
 
 const mapDispatchToProps = {
   fetchUserTrips,

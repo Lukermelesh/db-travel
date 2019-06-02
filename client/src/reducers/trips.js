@@ -10,7 +10,7 @@ const updateTripStatus = (state, { tripId, userId }, status) => {
       ? {
           ...trip,
           details: [
-            ...trip.details.map(details =>
+            ...trip.travelDetails.map(details =>
               details.userId === userId ? { ...details, status } : details
             )
           ]
@@ -19,15 +19,16 @@ const updateTripStatus = (state, { tripId, userId }, status) => {
   );
 };
 
-export default (state = [], action) => {
+export default (state = { ownTrips: [], all: [] }, action) => {
   switch (action.type) {
     case APPROVE_TRIP_SUCCESS:
       return updateTripStatus(state, action.payload, APPROVED);
     case REJECT_TRIP_SUCCESS:
       return updateTripStatus(state, action.payload.tripId, REJECTED);
     case FETCH_USER_TRIPS_SUCCESS:
+      return { ...state, ownTrips: action.payload };
     case FETCH_ALL_TRIPS_SUCCESS:
-      return action.payload;
+      return { ...state, all: action.payload };
     default:
       return state;
   }

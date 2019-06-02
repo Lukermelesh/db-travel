@@ -1,6 +1,5 @@
 import { createAction } from 'redux-actions';
 import { REJECTED } from '../constants/trip-status';
-import { getUserId } from '../selectors/user-data';
 import { post } from '../helpers/request-helpers';
 
 export const REJECT_TRIP_REQUEST = 'rejectTrip/FETCH_REQUEST';
@@ -12,16 +11,13 @@ export const rejectTripSuccess = createAction(REJECT_TRIP_SUCCESS);
 export const rejectTripFailure = createAction(REJECT_TRIP_FAILURE);
 
 export const rejectTrip = tripId => {
-  return async (dispatch, getState) => {
+  return async dispatch => {
     dispatch(rejectTripRequest());
     try {
-      const state = getState();
-      const userId = getUserId(state);
       await post(`/trip/${tripId}`, {
-        action: REJECTED,
-        userId
+        action: REJECTED
       });
-      dispatch(rejectTripSuccess({ tripId, userId }));
+      dispatch(rejectTripSuccess({ tripId }));
     } catch {
       dispatch(rejectTripFailure());
     }

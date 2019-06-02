@@ -9,11 +9,11 @@ export const fetchUserTripsRequest = createAction(FETCH_USER_TRIPS_REQUEST);
 export const fetchUserTripsSuccess = createAction(FETCH_USER_TRIPS_SUCCESS);
 export const fetchUserTripsFailure = createAction(FETCH_USER_TRIPS_FAILURE);
 
-export const fetchUserTrips = userId => {
+export const fetchUserTrips = () => {
   return async dispatch => {
-    dispatch(fetchUserTripsRequest({ userId }));
+    dispatch(fetchUserTripsRequest());
     try {
-      const trips = await get(`/trips/${userId}`);
+      const trips = await get(`/trip/allUserTrips`);
       dispatch(fetchUserTripsSuccess(trips.data));
     } catch {
       dispatch(fetchUserTripsFailure());
