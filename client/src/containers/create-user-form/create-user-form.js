@@ -9,6 +9,8 @@ import connect from 'react-redux/es/connect/connect';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { createUser } from '../../actions/create-user';
 import TextField from '@material-ui/core/TextField/TextField';
+import { Link } from 'react-router-dom';
+import { MY_TRIPS_ROUTE } from '../../constants/routes';
 
 const styles = theme => ({
   layout: {
@@ -44,10 +46,9 @@ const styles = theme => ({
   }
 });
 
-const CreateUserForm = ({ classes, createUser, history }) => {
+const CreateUserForm = ({ classes, createUser }) => {
   const [email, setEmail] = useState();
   const handleOnEmailChange = event => setEmail(event.target.value);
-  const handleCancel = () => history.goBack();
   const handleCreateUser = () => createUser(email);
 
   return (
@@ -70,8 +71,8 @@ const CreateUserForm = ({ classes, createUser, history }) => {
             </Grid>
           </Grid>
           <div className={classes.buttons}>
-            <Button className={classes.button} onClick={handleCancel}>
-              Cancel
+            <Button className={classes.button}>
+              <Link to={MY_TRIPS_ROUTE}>Cancel</Link>
             </Button>
             <Button
               className={classes.button}

@@ -12,6 +12,8 @@ import { flow } from 'lodash';
 import TextField from '@material-ui/core/TextField';
 import { createApartment } from '../../actions/create-apartment';
 import DeleteForever from '@material-ui/icons/DeleteForever';
+import { MY_TRIPS_ROUTE } from '../../constants/routes';
+import { Link } from 'react-router-dom';
 
 const styles = theme => ({
   layout: {
@@ -54,7 +56,7 @@ const styles = theme => ({
   }
 });
 
-const ApartmentForm = ({ classes, createApartment, history }) => {
+const ApartmentForm = ({ classes, createApartment }) => {
   const [title, setTitle] = useState();
   const [address, setAddress] = useState();
   const [roomNumber, setRoomNumber] = useState();
@@ -62,7 +64,6 @@ const ApartmentForm = ({ classes, createApartment, history }) => {
 
   const handleCreateApartment = () =>
     createApartment({ title, address, rooms: roomNumberList });
-  const handleCancel = () => history.goBack();
   const handleAddRoom = () => {
     if (!roomNumberList.includes(roomNumber))
       setRoomNumberList([...roomNumberList, roomNumber]);
@@ -137,8 +138,8 @@ const ApartmentForm = ({ classes, createApartment, history }) => {
             </Grid>
           </Grid>
           <div className={classes.buttons}>
-            <Button className={classes.button} onClick={handleCancel}>
-              Cancel
+            <Button className={classes.button}>
+              <Link to={MY_TRIPS_ROUTE}>Cancel</Link>
             </Button>
             <Button
               className={classes.button}
