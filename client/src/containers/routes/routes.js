@@ -8,8 +8,11 @@ import CreateUserForm from '../create-user-form/create-user-form';
 import { ApartmentForm } from '../apartment-form';
 import FormView from '../form-view/form-view';
 import { SignupForm } from '../../components/signup-form';
+import { getTripById } from '../../selectors/trips';
+import { connect } from 'react-redux';
+import * as PropTypes from 'prop-types';
 
-const Routes = () => (
+const Routes = ({ getTripById }) => (
   <Router>
     <Route
       path={routes.MY_TRIPS_ROUTE}
@@ -67,13 +70,21 @@ const Routes = () => (
     />
     <Route
       path={`${routes.EDIT_TRIP_ROUTE}/:tripId`}
-      render={props => (
+      render={({ match: { params }, ...rest }) => (
         <View active={routes.ALL_TRIPS_ROUTE}>
-          <TripForm {...props} />
+          <TripForm trip={getTripById(params.tripId)} {...rest} />
         </View>
       )}
     />
   </Router>
 );
 
-export default Routes;
+Routes.propTypes = {
+  getTripById: PropTypes.func.isRequired
+};
+
+const mapStateToProps = state => ({
+  getTripById: id => getTripById(state, id)
+});
+
+export default connect(mapStateToProps)(Routes);

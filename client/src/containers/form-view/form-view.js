@@ -11,7 +11,7 @@ const FormView = ({ match, Form }) => (
     justify="center"
     style={{ minHeight: '100vh' }}
   >
-    <Grid item xs={3}>
+    <Grid item xs={12} sm={3}>
       <Form match={match} />
     </Grid>
   </Grid>

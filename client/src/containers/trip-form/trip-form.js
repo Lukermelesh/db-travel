@@ -27,8 +27,6 @@ import { fetchUserTrips } from '../../actions/fetch-user-trips';
 import { jsToUnixTime } from '../../helpers/date-helpers';
 import { uploadFile } from '../../helpers/azure-helpers';
 
-const getTripById = (trips, id) => trips.find(trip => trip.id === id);
-
 const styles = theme => ({
   layout: {
     width: 'auto',
@@ -87,7 +85,7 @@ const TripForm = ({
   fetchLocationList,
   fetchApartmentList,
   history,
-  match: { params }
+  trip
 }) => {
   const [userSuggestions, setUserSuggestions] = useState([]);
   const [apartmentsSuggestions, setApartmentsSuggestions] = useState([]);
@@ -111,7 +109,7 @@ const TripForm = ({
 
     const transformLocationToSelection = location => ({
       label: location.name,
-      value: location.id
+      value: location.name
     });
 
     const fetchLocationSuggestions = async () => {
@@ -121,20 +119,17 @@ const TripForm = ({
     };
 
     //TODO: make edit
-    // const populateTripData = async () => {
-    //   const trip = getTripById(trips, params.tripId);
-    //   if (!trip) {
-    //     await fetchUserTrips();
-    //   }
-    //   handleDepartureDateChange(new Date(trip.from));
-    //   handleReturnDateChange(new Date(trip.to));
-    //   // setOrigin(transformLocationToSelection(trip.origin));
-    //   // setDestination(transformLocationToSelection(trip.destination));
-    // };
-    //
-    // if (params.tripId) {
-    //   populateTripData();
-    // }
+    const populateTripData = async () => {
+      handleDepartureDateChange(new Date(trip.from));
+      handleReturnDateChange(new Date(trip.to));
+      setOrigin(transformLocationToSelection({ name: trip.origin }));
+      setDestination(transformLocationToSelection({ name: trip.destination }));
+      // setTravellerDetails(trip.travelDetails);
+    };
+
+    if (trip) {
+      populateTripData();
+    }
 
     fetchUserSuggestions();
     fetchLocationSuggestions();
@@ -300,7 +295,8 @@ const TripForm = ({
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Select
+              F
+                value={origin}
                 onChange={setOrigin}
                 options={locationSuggestions}
                 placeholder="Origin"
@@ -308,6 +304,7 @@ const TripForm = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <Select
+                value={destination}
                 onChange={setDestination}
                 options={
                   origin
@@ -384,7 +381,8 @@ TripForm.propTypes = {
   createTrip: PropTypes.func.isRequired,
   fetchUserList: PropTypes.func.isRequired,
   fetchLocationList: PropTypes.func.isRequired,
-  fetchApartmentList: PropTypes.func.isRequired
+  fetchApartmentList: PropTypes.func.isRequired,
+  trip: PropTypes.object
 };
 
 const mapDispatchToProps = {
