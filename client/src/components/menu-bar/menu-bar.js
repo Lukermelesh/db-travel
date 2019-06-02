@@ -7,6 +7,7 @@ import * as routes from '../../constants/routes';
 import { ADMIN, ORGANIZER, REGULAR } from '../../constants/user-types';
 import { getUserType } from '../../selectors/user-data';
 import { connect } from 'react-redux';
+import { logoutUser } from '../../actions/logout-user';
 
 const styles = theme => ({
   root: {
@@ -47,7 +48,7 @@ const menuItems = [
 ];
 
 //TODO: make different navigation for mobile (with hamburger icon)
-const MenuBar = ({ active, classes, userType }) => {
+const MenuBar = ({ active, classes, userType, logoutUser }) => {
   const makeButton = (text, to, isActive) => (
     <Link className={classes.navLink} key={to} to={to}>
       <Button
@@ -67,7 +68,7 @@ const MenuBar = ({ active, classes, userType }) => {
             .filter(item => item.forUsers.includes(userType))
             .map(item => makeButton(item.text, item.to, item.to === active))}
         </div>
-        <Button onClick={() => alert('should logout')}>Log Out</Button>
+        <Button onClick={logoutUser}>Log Out</Button>
       </Toolbar>
     </AppBar>
   );
@@ -75,11 +76,19 @@ const MenuBar = ({ active, classes, userType }) => {
 
 MenuBar.propTypes = {
   active: PropTypes.string,
-  userType: PropTypes.number.isRequired
+  userType: PropTypes.number.isRequired,
+  logoutUser: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   userType: getUserType(state)
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(MenuBar));
+const mapDispatchToProps = {
+  logoutUser
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(MenuBar));
