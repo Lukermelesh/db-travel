@@ -196,13 +196,6 @@ const TripCard = ({
           {isSingleTraveller ? (
             <Fragment>
               <Typography variant="h6" component="p">
-                Department
-              </Typography>
-              <Typography component="p">
-                {trip.travelDetails[0].department}
-              </Typography>
-              <Divider className={classes.divider} />
-              <Typography variant="h6" component="p">
                 Tickets:
               </Typography>
               <Links links={trip.travelDetails[0].tickets} />
