@@ -25,6 +25,7 @@ import { uniqBy, flow } from 'lodash';
 import { fetchApartmentList } from '../../actions/fetch-apartment-list';
 import { fetchUserTrips } from '../../actions/fetch-user-trips';
 import { jsToUnixTime } from '../../helpers/date-helpers';
+import { uploadFile } from '../../helpers/azure-helpers';
 
 const getTripById = (trips, id) => trips.find(trip => trip.id === id);
 
@@ -194,21 +195,26 @@ const TripForm = ({
               ...t,
               tickets: replace
                 ? tickets
-                : uniqBy([...t.tickets, ...tickets], 'name')
+                : uniqBy([...t.tickets, ...tickets], 'title')
             }
           : t
       )
     );
   };
-  const handleTicketUpload = userId => ({ target }) => {
-    setTickets(userId, Array.from(target.files));
+  const handleTicketUpload = userId => async ({ target }) => {
+    const files = Array.from(target.files).filter(
+      f =>
+        !travellerDetails.find(({ tickets }) =>
+          tickets.find(t => t.title === f.name)
+        )
+    );
+    const uploadedFiles = await Promise.all(files.map(uploadFile));
+    setTickets(userId, uploadedFiles);
   };
   const handleTicketDelete = userId => ({ title }) => {
     const tickets = travellerDetails.find(t => t.value === userId).tickets;
-    setTickets(userId, tickets.filter(t => t.name !== title), true);
+    setTickets(userId, tickets.filter(t => t.title !== title), true);
   };
-
-  const getFileLinks = files => files.map(t => ({ title: t.name }));
 
   const setApartmentForTraveller = userId => selection => {
     setTravellerDetails(
@@ -252,7 +258,7 @@ const TripForm = ({
                 </div>
                 <Links
                   allowDelete
-                  links={getFileLinks(tickets)}
+                  links={tickets}
                   onDeleteClick={handleTicketDelete(userId)}
                 />
                 <Divider className={classes.divider} />
@@ -272,10 +278,7 @@ const TripForm = ({
                     <Typography variant="h6" component="p">
                       Reservation
                     </Typography>
-                    <Links
-                      allowDelete
-                      links={getFileLinks(accommodation.files)}
-                    />
+                    <Links allowDelete links={accommodation.files} />
                   </Fragment>
                 )}
               </div>

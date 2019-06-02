@@ -48,7 +48,6 @@ const TripsView = ({
     <div className={classes.layout}>
       <Grid container spacing={24}>
         {trips.map(trip => {
-          console.log('TRIP -> ', trip);
           return (
             <Grid key={trip.id} item xs={12} sm={12} md={4} lg={3}>
               <TripCard trip={trip} />
@@ -75,13 +74,10 @@ TripsView.propTypes = {
   userType: PropTypes.number.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => {
-  console.log('TRIPS ', state.trips);
-  return {
-    trips: ownProps.allTrips ? state.trips.all : getOwnTrips(state),
-    userType: getUserType(state)
-  };
-};
+const mapStateToProps = (state, ownProps) => ({
+  trips: ownProps.allTrips ? state.trips.all : getOwnTrips(state),
+  userType: getUserType(state)
+});
 
 const mapDispatchToProps = {
   fetchUserTrips,
