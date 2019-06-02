@@ -4,16 +4,12 @@ import './index.css';
 import { App } from './containers/app';
 import * as serviceWorker from './serviceWorker';
 import axios from 'axios';
-import { get, post, requestConfig } from './helpers/request-helpers';
-import { parseCookie } from './helpers/cookie-helpers';
+import { get, post } from './helpers/request-helpers';
 
 const initialize = () => {
   window.axios = axios;
   window.get = get;
   window.post = post;
-  if (document.cookie) {
-    requestConfig.token = parseCookie().token;
-  }
 };
 
 if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined')

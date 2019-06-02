@@ -1,9 +1,13 @@
 import { LOGIN_USER_SUCCESS } from '../actions/login-user';
 import { LOGOUT_USER_SUCCESS } from '../actions/logout-user';
 import { parseCookie } from '../helpers/cookie-helpers';
+import { requestConfig } from '../helpers/request-helpers';
 
 const getDefaultState = () => {
   const cookie = parseCookie();
+  if (cookie.token) {
+    requestConfig.token = cookie.token;
+  }
   return {
     isLoggedIn: !!cookie.token,
     userType: cookie.type
