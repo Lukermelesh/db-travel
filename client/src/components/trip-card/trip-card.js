@@ -58,7 +58,8 @@ const TripCard = ({
   classes,
   approveTrip,
   rejectTrip,
-  isPrivilegedUser
+  isPrivilegedUser,
+  showActions
 }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -100,13 +101,19 @@ const TripCard = ({
   const travelDetails = trip.travelDetails[0];
   const isPending = trip.details.status === tripStatus.PENDING;
 
+  const hasTripStarted = trip => trip.from <= Date.now();
+
+  const getTravelDetailsByUserId = id =>
+    trip.travelDetails.find(td => td.userId === id);
+
   const renderTravellers = () =>
-    trip.travelDetails.map(details => {
-      const { tickets, accommodation } = details;
+    trip.travelers.map(traveller => {
+      const { id, name } = traveller;
+      const { tickets, accommodation } = getTravelDetailsByUserId(id);
       const iconColorOverride = { colorPrimary: classes.iconColorPrimary };
       return (
-        <div key={details.id} className={classes.flex}>
-          <Typography component="p">{details.name}</Typography>
+        <div key={id} className={classes.flex}>
+          <Typography component="p">{name}</Typography>
           <div className={classes.icons}>
             <FlightIcon
               classes={iconColorOverride}
@@ -158,7 +165,7 @@ const TripCard = ({
         className={classnames(classes.flex, !isPending && classes.justifyRight)}
         disableActionSpacing
       >
-        {isPending && (
+        {(showActions && !hasTripStarted(trip) && (
           <div className={classes.flex}>
             <div className={classes.primaryCta}>
               <Button
@@ -176,9 +183,9 @@ const TripCard = ({
               </Button>
             </div>
           </div>
-        )}
+        )) || <div />}
         <div>
-          {isPrivilegedUser && (
+          {isPrivilegedUser && !hasTripStarted(trip) && (
             <Link to={`${EDIT_TRIP_ROUTE}/${trip.id}`} component="p">
               <IconButton
                 classes={{ root: classes.iconButton }}
@@ -229,7 +236,8 @@ TripCard.propTypes = {
   classes: PropTypes.object.isRequired,
   approveTrip: PropTypes.func.isRequired,
   rejectTrip: PropTypes.func.isRequired,
-  isPrivilegedUser: PropTypes.bool.isRequired
+  isPrivilegedUser: PropTypes.bool.isRequired,
+  showActions: PropTypes.bool
 };
 
 const mapStateToProps = state => {

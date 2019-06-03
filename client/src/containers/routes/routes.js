@@ -19,7 +19,7 @@ const Routes = ({ getTripById }) => (
       exact
       render={props => (
         <View active={routes.MY_TRIPS_ROUTE}>
-          <TripsView {...props} />
+          <TripsView showActions {...props} />
         </View>
       )}
     />

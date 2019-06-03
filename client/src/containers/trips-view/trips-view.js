@@ -33,7 +33,8 @@ const TripsView = ({
   trips,
   allTrips,
   fetchAllTrips,
-  userType
+  userType,
+  showActions
 }) => {
   useEffect(() => {
     const fetchData = async () => {
@@ -50,7 +51,7 @@ const TripsView = ({
         {trips.map(trip => {
           return (
             <Grid key={trip.id} item xs={12} sm={12} md={4} lg={3}>
-              <TripCard trip={trip} />
+              <TripCard showActions={showActions} trip={trip} />
             </Grid>
           );
         })}
@@ -71,7 +72,8 @@ TripsView.propTypes = {
   fetchUserTrips: PropTypes.func.isRequired,
   trips: PropTypes.array.isRequired,
   allTrips: PropTypes.bool,
-  userType: PropTypes.number.isRequired
+  userType: PropTypes.number.isRequired,
+  showActions: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
