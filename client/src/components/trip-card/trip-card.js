@@ -132,6 +132,47 @@ const TripCard = ({
 
   const getTripStatus = () => (isSingleTraveller ? trip.details.status : '');
 
+  const renderTravellerDetails = (travellerDetails, travellerName) => {
+    const { value: userId, tickets, accommodation } = travellerDetails;
+    return (
+      <div key={userId} className={classes.nested}>
+        <Divider className={classes.divider} />
+        <Typography variant="h5" component="p">
+          {travellerName}
+        </Typography>
+        <Typography variant="h6" component="p">
+          Tickets
+        </Typography>
+        <Links
+          links={tickets.map(t => ({ url: t.fileUrl, title: t.fileUrl }))}
+        />
+        <Typography variant="h6" component="p">
+          Accommodation
+        </Typography>
+        <Typography component="p">{accommodation.location}</Typography>
+        <Typography component="p">{accommodation.location}</Typography>
+        {/*{accommodation.files && (*/}
+        {/*<Fragment>*/}
+        {/*<Divider className={classes.divider} />*/}
+        {/*<Typography variant="h6" component="p">*/}
+        {/*Reservation*/}
+        {/*</Typography>*/}
+        {/*<Links allowDelete links={accommodation.files} />*/}
+        {/*</Fragment>*/}
+        {/*)}*/}
+        {/*{acc.files && (*/}
+        {/*<Fragment>*/}
+        {/*<Divider className={classes.divider} />*/}
+        {/*<Typography variant="h6" component="p">*/}
+        {/*Reservation*/}
+        {/*</Typography>*/}
+        {/*<Links links={acc.files} />*/}
+        {/*</Fragment>*/}
+        {/*)}*/}
+      </div>
+    );
+  };
+
   const acc = (travelDetails && travelDetails.accommodation) || {};
   return (
     <Card>
@@ -200,30 +241,11 @@ const TripCard = ({
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          {isSingleTraveller ? (
-            <Fragment>
-              <Typography variant="h6" component="p">
-                Tickets:
-              </Typography>
-              <Links links={trip.travelDetails[0].tickets} />
-              <Divider className={classes.divider} />
-              <Typography variant="h6" component="p">
-                Accommodation
-              </Typography>
-              <Typography component="p">{acc.location}</Typography>
-              {acc.files && (
-                <Fragment>
-                  <Divider className={classes.divider} />
-                  <Typography variant="h6" component="p">
-                    Reservation
-                  </Typography>
-                  <Links links={acc.files} />
-                </Fragment>
-              )}
-            </Fragment>
-          ) : (
-            //TODO: Implement accordion!
-            <div>Implement accordion!</div>
+          {trip.travelers.map(t =>
+            renderTravellerDetails(
+              trip.travelDetails.find(td => td.userId === t.id),
+              t.name
+            )
           )}
         </CardContent>
       </Collapse>
