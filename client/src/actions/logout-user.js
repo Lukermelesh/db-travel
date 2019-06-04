@@ -11,6 +11,6 @@ export const logoutUserFailure = createAction(LOGOUT_USER_FAILURE);
 
 export const logoutUser = () => async dispatch => {
   requestConfig.token = null;
-  document.cookie = '';
+  localStorage.setItem('session', '');
   dispatch(logoutUserSuccess());
 };

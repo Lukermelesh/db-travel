@@ -117,13 +117,25 @@ const TripForm = ({
         setLocationSuggestions(locationList.map(transformLocationToSelection));
     };
 
-    //TODO: make edit
     const populateTripData = async () => {
       handleDepartureDateChange(new Date(trip.from));
       handleReturnDateChange(new Date(trip.to));
       setOrigin(transformLocationToSelection({ name: trip.origin }));
       setDestination(transformLocationToSelection({ name: trip.destination }));
-      // setTravellerDetails(trip.travelDetails);
+      setTravellerDetails(
+        trip.travelDetails.map(td => {
+          return {
+            accommodation: td.accommodation || {},
+            tickets: td.tickets.map(t => ({
+              title: t.fileUrl,
+              url: t.fileUrl
+            })),
+            isOpen: false,
+            value: td.userId,
+            label: (trip.travelers.find(t => t.id === td.userId) || {}).name
+          };
+        })
+      );
     };
 
     if (trip) {
@@ -150,14 +162,22 @@ const TripForm = ({
   }, [destination]);
 
   const handleCreateTrip = () => {
-    const tripData = {
-      origin: origin.label,
-      destination: destination.label,
-      from: jsToUnixTime(departureDate),
-      to: jsToUnixTime(returnDate)
-    };
-    const travellerDetails = {};
-    createTrip(tripData, travellerDetails);
+    if (
+      origin &&
+      origin.label &&
+      destination &&
+      destination.label &&
+      departureDate &&
+      returnDate
+    ) {
+      const tripData = {
+        origin: origin.label,
+        destination: destination.label,
+        from: jsToUnixTime(departureDate),
+        to: jsToUnixTime(returnDate)
+      };
+      createTrip(tripData, travellerDetails);
+    }
   };
   const handleCancel = () => history.goBack();
   const handleAddTraveller = () =>
@@ -260,6 +280,7 @@ const TripForm = ({
                   Accommodation
                 </Typography>
                 <Select
+                  // value={accommodation}
                   className={classes.fullWidth}
                   onChange={setApartmentForTraveller(userId)}
                   options={apartmentsSuggestions}
