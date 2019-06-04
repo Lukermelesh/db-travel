@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid/Grid';
 import Fab from '@material-ui/core/Fab/Fab';
 import AddIcon from '@material-ui/icons/Add';
+import CallMergeIcon from '@material-ui/icons/CallMerge';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { TripCard } from '../../components/trip-card';
@@ -13,6 +14,7 @@ import { getOwnTrips } from '../../selectors/trips';
 import { fetchAllTrips } from '../../actions/fetch-all-trips';
 import { NEW_TRIP_ROUTE } from '../../constants/routes';
 import { ADMIN, ORGANIZER } from '../../constants/user-types';
+import { mergeTrips } from '../../actions/merge-trips';
 
 const styles = theme => ({
   layout: {
@@ -24,6 +26,11 @@ const styles = theme => ({
     position: 'fixed',
     bottom: theme.spacing.unit * 4,
     right: theme.spacing.unit * 4
+  },
+  fab1: {
+    position: 'fixed',
+    bottom: theme.spacing.unit * 4,
+    right: theme.spacing.unit * 16
   }
 });
 
@@ -34,8 +41,12 @@ const TripsView = ({
   allTrips,
   fetchAllTrips,
   userType,
-  showActions
+  showActions,
+  mergeTrips
 }) => {
+  const [isMerging, setIsMerging] = useState(false);
+  const [tripsToMerge, setTripsToMerge] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       //TODO: maybe implement a loader while loading trips?
@@ -45,22 +56,42 @@ const TripsView = ({
     fetchData();
   }, []);
 
+  const handleTripSelect = tripId => setTripsToMerge([...tripsToMerge, tripId]);
+
+  const handleMergeClick = () => {
+    if (isMerging && tripsToMerge.length) {
+      mergeTrips(tripsToMerge);
+    }
+    setTripsToMerge([]);
+    setIsMerging(!isMerging);
+  };
+
   return (
     <div className={classes.layout}>
       <Grid container spacing={24}>
         {trips.map(trip => {
           return (
             <Grid key={trip.id} item xs={12} sm={12} md={4} lg={3}>
-              <TripCard showActions={showActions} trip={trip} />
+              <TripCard
+                showActions={showActions}
+                trip={trip}
+                isMerging={isMerging}
+                onTripSelect={handleTripSelect}
+              />
             </Grid>
           );
         })}
         {(userType === ORGANIZER || userType === ADMIN) && (
-          <Link to={NEW_TRIP_ROUTE}>
-            <Fab className={classes.fab} color="primary" aria-label="Add">
-              <AddIcon />
+          <Fragment>
+            <Fab className={classes.fab1} color="primary" aria-label="Merge">
+              <CallMergeIcon onClick={handleMergeClick} />
             </Fab>
-          </Link>
+            <Link to={NEW_TRIP_ROUTE}>
+              <Fab className={classes.fab} color="primary" aria-label="Add">
+                <AddIcon />
+              </Fab>
+            </Link>
+          </Fragment>
         )}
       </Grid>
     </div>
@@ -83,7 +114,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = {
   fetchUserTrips,
-  fetchAllTrips
+  fetchAllTrips,
+  mergeTrips
 };
 
 export default connect(

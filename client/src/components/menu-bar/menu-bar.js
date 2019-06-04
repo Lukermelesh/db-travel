@@ -33,7 +33,7 @@ const menuItems = [
   {
     to: routes.ALL_TRIPS_ROUTE,
     text: 'All Trips',
-    forUsers: [ORGANIZER]
+    forUsers: [ORGANIZER, ADMIN]
   },
   {
     to: routes.ADD_APARTMENT_ROUTE,

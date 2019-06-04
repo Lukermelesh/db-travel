@@ -19,7 +19,7 @@ export const fetchApartmentList = () => {
   return async dispatch => {
     dispatch(fetchApartmentListRequest());
     try {
-      const apartments = await get(`/location`);
+      const apartments = await get(`/apartment/room`);
       dispatch(fetchApartmentListSuccess(apartments.data));
       return apartments.data;
     } catch {

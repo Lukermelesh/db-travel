@@ -38,7 +38,7 @@ export const createTrip = (tripData, travellerDetails) => {
                   userId,
                   tripId,
                   roomId: td.accommodation.value,
-                  price: 0,
+                  price: 1,
                   type: ROOM
                 })
               return result;

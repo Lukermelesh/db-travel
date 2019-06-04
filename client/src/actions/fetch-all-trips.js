@@ -13,7 +13,7 @@ export const fetchAllTrips = () => {
   return async dispatch => {
     dispatch(fetchAllTripsRequest());
     try {
-      const trips = await get(`/trips`);
+      const trips = await get(`/trip/allUserTrips`);
       dispatch(fetchAllTripsSuccess(trips.data));
     } catch {
       dispatch(fetchAllTripsFailure());

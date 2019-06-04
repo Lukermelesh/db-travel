@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, {Fragment, useState} from 'react';
 import { flow } from 'lodash';
 import PropTypes from 'prop-types';
 import {
@@ -28,6 +28,7 @@ import { ExpandMoreButton } from '../expand-more-button';
 import Links from '../links/links';
 import { EDIT_TRIP_ROUTE } from '../../constants/routes';
 import { Link } from 'react-router-dom';
+import Checkbox from "@material-ui/core/es/Checkbox/Checkbox";
 
 const styles = theme => ({
   primaryCta: {
@@ -59,7 +60,9 @@ const TripCard = ({
   approveTrip,
   rejectTrip,
   isPrivilegedUser,
-  showActions
+  showActions,
+  isMerging,
+  onTripSelect
 }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -82,6 +85,19 @@ const TripCard = ({
 
   const handleApproveClick = () => approveTrip(trip.id);
   const handleDeclineClick = () => rejectTrip(trip.id);
+
+  const handleOnChange = ev => {
+    if (ev.target.checked) {
+      onTripSelect(trip.id)
+    }
+  }
+
+  const getCardHeader = () => (
+    <Fragment>
+    <Typography variant="h6">{getCardTitle()}</Typography>
+      {isMerging && <Checkbox onChange={handleOnChange}/>}
+    </Fragment>
+  )
 
   const getCardTitle = () => {
     switch (getTripStatus()) {
@@ -149,8 +165,7 @@ const TripCard = ({
         <Typography variant="h6" component="p">
           Accommodation
         </Typography>
-        <Typography component="p">{accommodation.location}</Typography>
-        <Typography component="p">{accommodation.location}</Typography>
+        {/*<Typography component="p">{accommodation.location}</Typography>*/}
         {/*{accommodation.files && (*/}
         {/*<Fragment>*/}
         {/*<Divider className={classes.divider} />*/}
@@ -177,7 +192,7 @@ const TripCard = ({
   return (
     <Card>
       <CardHeader
-        title={getCardTitle()}
+        title={getCardHeader()}
         style={{
           backgroundColor: getHeaderColor()
         }}
@@ -259,7 +274,9 @@ TripCard.propTypes = {
   approveTrip: PropTypes.func.isRequired,
   rejectTrip: PropTypes.func.isRequired,
   isPrivilegedUser: PropTypes.bool.isRequired,
-  showActions: PropTypes.bool
+  showActions: PropTypes.bool,
+  isMerging: PropTypes.bool,
+onTripSelect: PropTypes.func,
 };
 
 const mapStateToProps = state => {
