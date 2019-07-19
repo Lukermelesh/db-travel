@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions';
-import { REJECTED } from '../constants/trip-status';
 import { post } from '../helpers/request-helpers';
 
 export const REJECT_TRIP_REQUEST = 'rejectTrip/FETCH_REQUEST';
@@ -14,8 +13,9 @@ export const rejectTrip = tripId => {
   return async dispatch => {
     dispatch(rejectTripRequest());
     try {
-      await post(`/trip/${tripId}`, {
-        action: REJECTED
+      await post('/trip/changeStatus', {
+        tripId,
+        status: 2
       });
       dispatch(rejectTripSuccess({ tripId }));
     } catch {

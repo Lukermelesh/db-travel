@@ -84,7 +84,8 @@ const TripForm = ({
   fetchLocationList,
   fetchApartmentList,
   history,
-  trip
+  trip,
+  isNew
 }) => {
   const [userSuggestions, setUserSuggestions] = useState([]);
   const [apartmentsSuggestions, setApartmentsSuggestions] = useState([]);
@@ -93,6 +94,7 @@ const TripForm = ({
   const [travellerDetails, setTravellerDetails] = useState([]);
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
+  const [allowCreate, setAllowCreate] = useState(true);
 
   const [departureDate, handleDepartureDateChange] = useState(new Date());
   const [returnDate, handleReturnDateChange] = useState(new Date());
@@ -151,7 +153,7 @@ const TripForm = ({
       const apartmentList = await fetchApartmentList();
       apartmentList &&
         setApartmentsSuggestions(
-          apartmentList.map(apt => ({ label: apt.name, value: apt.id }))
+          apartmentList.map(apt => ({ label: apt.identifier, value: apt.id }))
         );
     };
 
@@ -176,7 +178,26 @@ const TripForm = ({
         from: jsToUnixTime(departureDate),
         to: jsToUnixTime(returnDate)
       };
-      createTrip(tripData, travellerDetails);
+      createTrip(tripData, travellerDetails).then(() => history.push('/'), () => alert('Failed to create trip'));
+    }
+  };
+
+  const handleUpdateTrip = () => {
+    if (
+      origin &&
+      origin.label &&
+      destination &&
+      destination.label &&
+      departureDate &&
+      returnDate
+    ) {
+      const tripData = {
+        origin: origin.label,
+        destination: destination.label,
+        from: jsToUnixTime(departureDate),
+        to: jsToUnixTime(returnDate)
+      };
+      createTrip(tripData, travellerDetails, true).then(() => history.push('/'), () => alert('Failed to create trip'));
     }
   };
   const handleCancel = () => history.goBack();
@@ -304,6 +325,10 @@ const TripForm = ({
     </List>
   );
 
+  const handleAllowCreateSet = val => () => {
+    setAllowCreate(val);
+  }
+
   return (
     <main className={classes.layout}>
       <Paper className={classes.paper}>
@@ -336,6 +361,8 @@ const TripForm = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <InlineDatePicker
+                onError={handleAllowCreateSet(false)}
+                onAccept={handleAllowCreateSet(true)}
                 className={classes.fullWidth}
                 disablePast
                 label="From"
@@ -345,6 +372,8 @@ const TripForm = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <InlineDatePicker
+                onError={handleAllowCreateSet(false)}
+                onAccept={handleAllowCreateSet(true)}
                 className={classes.fullWidth}
                 minDate={departureDate}
                 label="Until"
@@ -385,9 +414,10 @@ const TripForm = ({
               className={classes.button}
               variant="contained"
               color="primary"
-              onClick={handleCreateTrip}
+              onClick={isNew ? handleCreateTrip : handleUpdateTrip}
+              disabled={!allowCreate}
             >
-              Create Trip
+              {isNew ? 'Create Trip' : 'Update'}
             </Button>
           </div>
         </Fragment>

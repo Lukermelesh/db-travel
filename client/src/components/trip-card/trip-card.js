@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react';
+import React, { Fragment, useState } from 'react';
 import { flow } from 'lodash';
 import PropTypes from 'prop-types';
 import {
@@ -28,7 +28,7 @@ import { ExpandMoreButton } from '../expand-more-button';
 import Links from '../links/links';
 import { EDIT_TRIP_ROUTE } from '../../constants/routes';
 import { Link } from 'react-router-dom';
-import Checkbox from "@material-ui/core/es/Checkbox/Checkbox";
+import Checkbox from '@material-ui/core/es/Checkbox/Checkbox';
 
 const styles = theme => ({
   primaryCta: {
@@ -66,7 +66,7 @@ const TripCard = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
 
-  const isSingleTraveller = trip.travelDetails.length === 1;
+  const isSingleTraveller = trip && trip.travelDetails && trip.travelDetails.length === 1;
   const handleExpandClick = () => setExpanded(!expanded);
   const getHeaderColor = () => {
     switch (getTripStatus()) {
@@ -88,16 +88,16 @@ const TripCard = ({
 
   const handleOnChange = ev => {
     if (ev.target.checked) {
-      onTripSelect(trip.id)
+      onTripSelect(trip.id);
     }
-  }
+  };
 
   const getCardHeader = () => (
     <Fragment>
-    <Typography variant="h6">{getCardTitle()}</Typography>
-      {isMerging && <Checkbox onChange={handleOnChange}/>}
+      <Typography variant="h6">{getCardTitle()}</Typography>
+      {isMerging && <Checkbox onChange={handleOnChange} />}
     </Fragment>
-  )
+  );
 
   const getCardTitle = () => {
     switch (getTripStatus()) {
@@ -114,7 +114,7 @@ const TripCard = ({
     }
   };
 
-  const travelDetails = trip.travelDetails[0];
+  const travelDetails = trip && trip.travelDetails && trip.travelDetails[0];
   const isPending = trip.details.status === tripStatus.PENDING;
 
   const hasTripStarted = trip => trip.from <= Date.now();
@@ -123,7 +123,7 @@ const TripCard = ({
     trip.travelDetails.find(td => td.userId === id);
 
   const renderTravellers = () =>
-    trip.travelers.map(traveller => {
+    trip.travelers ? trip.travelers.map(traveller => {
       const { id, name } = traveller;
       const { tickets, accommodation } = getTravelDetailsByUserId(id);
       const iconColorOverride = { colorPrimary: classes.iconColorPrimary };
@@ -144,9 +144,31 @@ const TripCard = ({
           </div>
         </div>
       );
-    });
+    }) : (
+        <div className={classes.flex}>
+          <div className={classes.icons}>
+            <FlightIcon
+              classes={{ colorPrimary: classes.iconColorPrimary }}
+              color={trip.details.tickets && trip.details.tickets.length ? 'primary' : 'error'}
+            />
+            <HotelIcon
+              classes={{ colorPrimary: classes.iconColorPrimary }}
+              color={
+                trip.details.accommodation && trip.details.accommodation.fileUrl ? 'primary' : 'error'
+              }
+            />
+          </div>
+        </div>
+      );
 
-  const getTripStatus = () => (isSingleTraveller ? trip.details.status : '');
+  const getTripStatus = () => {
+    const status = trip && trip.details && trip.details.status;
+    if (typeof status !== 'number') {
+      return 1;
+    } else {
+      return status
+    }
+  }
 
   const renderTravellerDetails = (travellerDetails, travellerName) => {
     const { value: userId, tickets, accommodation } = travellerDetails;
@@ -162,28 +184,23 @@ const TripCard = ({
         <Links
           links={tickets.map(t => ({ url: t.fileUrl, title: t.fileUrl }))}
         />
-        <Typography variant="h6" component="p">
-          Accommodation
-        </Typography>
-        {/*<Typography component="p">{accommodation.location}</Typography>*/}
-        {/*{accommodation.files && (*/}
-        {/*<Fragment>*/}
-        {/*<Divider className={classes.divider} />*/}
-        {/*<Typography variant="h6" component="p">*/}
-        {/*Reservation*/}
-        {/*</Typography>*/}
-        {/*<Links allowDelete links={accommodation.files} />*/}
-        {/*</Fragment>*/}
-        {/*)}*/}
-        {/*{acc.files && (*/}
-        {/*<Fragment>*/}
-        {/*<Divider className={classes.divider} />*/}
-        {/*<Typography variant="h6" component="p">*/}
-        {/*Reservation*/}
-        {/*</Typography>*/}
-        {/*<Links links={acc.files} />*/}
-        {/*</Fragment>*/}
-        {/*)}*/}
+        {accommodation && (
+          <Fragment>
+            <Typography variant="h6" component="p">
+              Accommodation
+            </Typography>
+            <Typography component="p">{accommodation.roomName}</Typography>
+            {accommodation.files && (
+              <Fragment>
+                <Divider className={classes.divider} />
+                <Typography variant="h6" component="p">
+                  Reservation
+                </Typography>
+                <Links allowDelete links={accommodation.files} />
+              </Fragment>
+            )}
+          </Fragment>
+        )}
       </div>
     );
   };
@@ -256,12 +273,13 @@ const TripCard = ({
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          {trip.travelers.map(t =>
+          {trip.travelers ? trip.travelers.map(t =>
             renderTravellerDetails(
               trip.travelDetails.find(td => td.userId === t.id),
               t.name
-            )
-          )}
+            )) : renderTravellerDetails(trip.details, '')
+
+          }
         </CardContent>
       </Collapse>
     </Card>
@@ -276,7 +294,7 @@ TripCard.propTypes = {
   isPrivilegedUser: PropTypes.bool.isRequired,
   showActions: PropTypes.bool,
   isMerging: PropTypes.bool,
-onTripSelect: PropTypes.func,
+  onTripSelect: PropTypes.func
 };
 
 const mapStateToProps = state => {

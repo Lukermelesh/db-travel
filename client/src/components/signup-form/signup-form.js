@@ -17,7 +17,7 @@ const styles = theme => ({
   }
 });
 
-const SignupForm = ({ classes, signupUser, match: { params } }) => {
+const SignupForm = ({ classes, signupUser, match: { params }, history }) => {
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [password, setPassword] = useState('');
 
@@ -26,7 +26,7 @@ const SignupForm = ({ classes, signupUser, match: { params } }) => {
   const updatePassword = event => setPassword(event.target.value);
 
   const handleSignupClick = () =>
-    signupUser(passwordConfirmation, password, params.token);
+    signupUser(passwordConfirmation, password, params.token).then(() => history.push('/'), () => alert('Failed to signup'));
   const handleKeyPress = event => {
     if (event.key === 'Enter') {
       handleSignupClick();

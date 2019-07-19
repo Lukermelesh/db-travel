@@ -60,7 +60,7 @@ const TripsView = ({
 
   const handleMergeClick = () => {
     if (isMerging && tripsToMerge.length) {
-      mergeTrips(tripsToMerge);
+      mergeTrips(tripsToMerge).then();
     }
     setTripsToMerge([]);
     setIsMerging(!isMerging);

@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions';
-import { APPROVED } from '../constants/trip-status';
 import { post } from '../helpers/request-helpers';
 
 export const APPROVE_TRIP_REQUEST = 'approveTrip/FETCH_REQUEST';
@@ -14,8 +13,9 @@ export const approveTrip = tripId => {
   return async dispatch => {
     dispatch(approveTripRequest());
     try {
-      await post(`/trip/${tripId}`, {
-        action: APPROVED
+      await post('/trip/changeStatus', {
+        tripId,
+        status: 0
       });
       dispatch(approveTripSuccess({ tripId }));
     } catch {

@@ -9,15 +9,16 @@ export const createUserRequest = createAction(CREATE_USER_REQUEST);
 export const createUserSuccess = createAction(CREATE_USER_SUCCESS);
 export const createUserFailure = createAction(CREATE_USER_FAILURE);
 
-export const createUser = email => {
+const REGULAR = 0;
+const ORGANIZER = 1;
+
+export const createUser = (email, isOrganizer) => {
   return async dispatch => {
     dispatch(createUserRequest());
-    try {
-      await post(`/auth/createUser`, { email });
-      //TODO: SHOW SUCCESS MESSAGE
-      dispatch(createUserSuccess());
-    } catch {
-      dispatch(createUserFailure());
-    }
+    await post(`/auth/createUser`, {
+      email,
+      type: isOrganizer ? ORGANIZER : REGULAR
+    });
+    dispatch(createUserSuccess());
   };
 };

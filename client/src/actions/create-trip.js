@@ -1,5 +1,5 @@
 import { createAction } from 'redux-actions';
-import { post } from '../helpers/request-helpers';
+import { post, put } from '../helpers/request-helpers';
 import { flatten } from 'lodash';
 
 export const CREATE_TRIP_REQUEST = 'createTrip/FETCH_REQUEST';
@@ -13,11 +13,14 @@ export const createTripFailure = createAction(CREATE_TRIP_FAILURE);
 const ROOM = 0;
 const TICKET = 1;
 
-export const createTrip = (tripData, travellerDetails) => {
+export const createTrip = (tripData, travellerDetails, isUpdating) => {
   return async dispatch => {
+    let res;
     dispatch(createTripRequest());
-    try {
-      const res = await post('/trip', tripData);
+    if (isUpdating) {
+      await put('/trip', tripData);
+    } else {
+      res = await post('/trip', tripData);
       const tripId = res.data.id;
       await Promise.all(
         flatten(
@@ -26,31 +29,29 @@ export const createTrip = (tripData, travellerDetails) => {
             const userId = td.value;
             if (td.tickets.length) {
               await post('/ticket', {
-                  userId,
-                  tripId,
-                  fileUrl: td.tickets[0].url, //TODO: SUPPORT MULTIPLE FILES
-                  price: 1,
-                  type: TICKET
-                })
+                userId,
+                tripId,
+                fileUrl: td.tickets[0].url, //TODO: SUPPORT MULTIPLE FILES
+                price: 1,
+                type: TICKET
+              });
             }
             if (td.accommodation.value) {
               await post('/ticket', {
-                  userId,
-                  tripId,
-                  roomId: td.accommodation.value,
-                  price: 1,
-                  type: ROOM
-                })
+                userId,
+                tripId,
+                roomId: td.accommodation.value,
+                price: 1,
+                type: ROOM
+              });
               return result;
             }
           })
         )
       );
-      dispatch(createTripSuccess());
-      return res;
-    } catch (e) {
-      console.log('ERROR ', e)
-      dispatch(createTripFailure());
     }
+
+    dispatch(createTripSuccess());
+    return res;
   };
 };

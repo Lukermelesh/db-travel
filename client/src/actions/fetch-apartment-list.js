@@ -19,7 +19,8 @@ export const fetchApartmentList = () => {
   return async dispatch => {
     dispatch(fetchApartmentListRequest());
     try {
-      const apartments = await get(`/apartment/room`);
+      const apartments = await get('/apartment/getRooms');
+      console.log('APARTM', apartments)
       dispatch(fetchApartmentListSuccess(apartments.data));
       return apartments.data;
     } catch {

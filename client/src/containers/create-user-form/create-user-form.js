@@ -11,6 +11,7 @@ import { createUser } from '../../actions/create-user';
 import TextField from '@material-ui/core/TextField/TextField';
 import { Link } from 'react-router-dom';
 import { MY_TRIPS_ROUTE } from '../../constants/routes';
+import Checkbox from "@material-ui/core/es/Checkbox/Checkbox";
 
 const styles = theme => ({
   layout: {
@@ -46,10 +47,11 @@ const styles = theme => ({
   }
 });
 
-const CreateUserForm = ({ classes, createUser }) => {
+const CreateUserForm = ({ classes, createUser, createUserError, createUserSuccess, history }) => {
   const [email, setEmail] = useState();
+  const [isOrganizer, setIsOrganizer] = useState();
   const handleOnEmailChange = event => setEmail(event.target.value);
-  const handleCreateUser = () => createUser(email);
+  const handleCreateUser = () => createUser(email, isOrganizer).then(() => history.push('/'), () => alert('Failed to create user'));
 
   return (
     <main className={classes.layout}>
@@ -67,6 +69,14 @@ const CreateUserForm = ({ classes, createUser }) => {
                 onChange={handleOnEmailChange}
                 placeholder="Email"
                 margin="none"
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <Typography variant="h6" gutterBottom>
+                Is Organizer?
+              </Typography>
+              <Checkbox
+                onChange={ev => setIsOrganizer(ev.target.checked)}
               />
             </Grid>
           </Grid>

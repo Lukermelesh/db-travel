@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography/Typography';
 import Grid from '@material-ui/core/Grid/Grid';
@@ -14,6 +14,8 @@ import { createApartment } from '../../actions/create-apartment';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import { MY_TRIPS_ROUTE } from '../../constants/routes';
 import { Link } from 'react-router-dom';
+import Select from 'react-select';
+import { fetchRealApartmentsList } from '../../actions/fetch-real-apartments';
 
 const styles = theme => ({
   layout: {
@@ -56,18 +58,38 @@ const styles = theme => ({
   }
 });
 
-const ApartmentForm = ({ classes, createApartment }) => {
+const ApartmentForm = ({
+  classes,
+  createApartment,
+  history,
+  fetchRealApartmentsList
+}) => {
   const [title, setTitle] = useState();
-  const [address, setAddress] = useState();
   const [roomNumber, setRoomNumber] = useState();
   const [roomNumberList, setRoomNumberList] = useState([]);
+  const [apartments, setApartments] = useState([]);
+
+  useEffect(() => {
+    const fetchApartments = async () => {
+      const apartmentList = await fetchRealApartmentsList();
+      apartmentList &&
+        setApartments(
+          apartmentList.map(apt => ({ label: apt.address, value: apt.id }))
+        );
+    };
+
+    fetchApartments();
+  }, []);
 
   const handleCreateApartment = () =>
-    createApartment({ title, address, rooms: roomNumberList });
-  const handleAddRoom = () => {
-    if (!roomNumberList.includes(roomNumber))
-      setRoomNumberList([...roomNumberList, roomNumber]);
-  };
+    createApartment({ id: title.value, roomNumber }).then(
+      () => history.push('/'),
+      () => alert('Failed to create apartment')
+    );
+  // const handleAddRoom = () => {
+  //   if (!roomNumberList.includes(roomNumber))
+  //     setRoomNumberList([...roomNumberList, roomNumber]);
+  // };
   const handleRemoveRoom = room => () =>
     setRoomNumberList(roomNumberList.filter(r => r !== room));
 
@@ -98,40 +120,20 @@ const ApartmentForm = ({ classes, createApartment }) => {
               </Typography>
             </Grid>
             <Grid item xs={12} sm={12}>
-              <TextField
-                margin="none"
-                label="Title"
-                fullWidth
-                onChange={event => setTitle(event.target.value)}
-                variant="outlined"
+              <Select
+                onChange={setTitle}
+                options={apartments}
+                placeholder="Apartment"
               />
             </Grid>
             <Grid item xs={12} sm={12}>
               <TextField
-                label="Address"
+                label="room number"
                 fullWidth
-                onChange={event => setAddress(event.target.value)}
+                onChange={ev => setRoomNumber(ev.target.value)}
                 margin="none"
                 variant="outlined"
               />
-            </Grid>
-            <Grid item xs={12} sm={10}>
-              <TextField
-                label="Room Number"
-                fullWidth
-                onChange={event => setRoomNumber(event.target.value)}
-                margin="none"
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item xs={2} className={classes.centerItem}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleAddRoom}
-              >
-                Add
-              </Button>
             </Grid>
             <Grid item xs={12}>
               {renderRooms()}
@@ -162,7 +164,8 @@ ApartmentForm.propTypes = {
 };
 
 const mapDispatchToProps = {
-  createApartment
+  createApartment,
+  fetchRealApartmentsList
 };
 
 export default flow(

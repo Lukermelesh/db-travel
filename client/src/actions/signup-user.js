@@ -12,17 +12,13 @@ export const signupUserFailure = createAction(SIGNUP_USER_FAILURE);
 export const signupUser = (password, repeatPassword, confirmationToken) => {
   return async dispatch => {
     dispatch(signupUserRequest());
-    try {
-      const result = await post('/auth/signup', {
-        repeatPassword,
-        password,
-        confirmationToken
-      });
+    const result = await post('/auth/signup', {
+      repeatPassword,
+      password,
+      confirmationToken
+    });
 
-      requestConfig.token = result.data.token;
-      dispatch(signupUserSuccess(result.data));
-    } catch {
-      dispatch(signupUserFailure());
-    }
+    requestConfig.token = result.data.token;
+    dispatch(signupUserSuccess(result.data));
   };
 };

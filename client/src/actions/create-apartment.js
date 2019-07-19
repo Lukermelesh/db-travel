@@ -11,12 +11,11 @@ export const createTripFailure = createAction(CREATE_TRIP_FAILURE);
 
 export const createApartment = apartmentData => {
   return async dispatch => {
-    dispatch(createTripRequest());
-    try {
-      await post(`/apartment`, apartmentData);
-      dispatch(createTripSuccess());
-    } catch {
-      dispatch(createTripFailure());
-    }
+    // dispatch(createTripRequest());
+    await post('/apartment/room', {
+      buildingId: apartmentData.id,
+      identifier: apartmentData.roomNumber,
+    });
+    // dispatch(createTripSuccess());
   };
 };

@@ -1,5 +1,7 @@
 import { createAction } from 'redux-actions';
 import { post } from '../helpers/request-helpers';
+import { fetchAllTrips } from './fetch-all-trips';
+import { fetchUserTrips } from './fetch-user-trips';
 
 export const MERGE_TRIPS_REQUEST = 'mergeTrips/FETCH_REQUEST';
 export const MERGE_TRIPS_SUCCESS = 'mergeTrips/FETCH_SUCCESS';
@@ -16,6 +18,8 @@ export const mergeTrips = ids => {
       await post(`/trip/joinTrips`, {
         ids
       });
+      fetchAllTrips();
+      fetchUserTrips();
       dispatch(mergeTripsSuccess());
     } catch {
       dispatch(mergeTripsFailure());
